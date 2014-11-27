@@ -4,7 +4,7 @@ wdquiz.question.addRegions
 
 # initialize
 wdquiz.question.addInitializer ->
-  wdquiz.question.containerRegion.show new wdquiz.question.container()
+  wdquiz.question.containerRegion.show new wdquiz.question.containerView()
 
 $ ->
   wdquiz.question.start()

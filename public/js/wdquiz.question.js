@@ -5,31 +5,29 @@ wdquiz.question.addRegions({
 });
 
 wdquiz.question.addInitializer(function() {
-  return wdquiz.question.containerRegion.show(new wdquiz.question.container());
+  return wdquiz.question.containerRegion.show(new wdquiz.question.containerView());
 });
 
 $(function() {
   return wdquiz.question.start();
 });
 
-
-
-wdquiz.question.choices = Marionette.ItemView.extend({
+wdquiz.question.choicesView = Marionette.ItemView.extend({
   template: JST["wdquiz.question.choices.jst"]
 });
 
-wdquiz.question.container = Backbone.Marionette.LayoutView.extend({
+wdquiz.question.containerView = Backbone.Marionette.LayoutView.extend({
   template: JST["wdquiz.question.container.jst"],
   regions: {
     question: "#question",
     choices: "#choices"
   },
   onShow: function() {
-    this.question.show(new wdquiz.question.question());
-    return this.choices.show(new wdquiz.question.choices());
+    this.question.show(new wdquiz.question.questionView());
+    return this.choices.show(new wdquiz.question.choicesView());
   }
 });
 
-wdquiz.question.question = Marionette.ItemView.extend({
+wdquiz.question.questionView = Marionette.ItemView.extend({
   template: JST["wdquiz.question.question.jst"]
 });
