@@ -1,5 +1,5 @@
-wdquiz.question.containerView = Backbone.Marionette.LayoutView.extend(
-  template: JST["wdquiz.question.container.jst"]
+wdquiz.question.quizView = Backbone.Marionette.LayoutView.extend(
+  template: JST["wdquiz.question.quiz.jst"]
   regions:
     question: "#question"
     choices: "#choices"
