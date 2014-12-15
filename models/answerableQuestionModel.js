@@ -14,35 +14,45 @@ model.getOne = function(id) {
   );
 };
 
-model.getEnabledQuestions = function() {
-  return client.read(
+model.getEnabledQuestion = function() {
+  return client.readOne(
     TABLE_NAME,
     {
       isEnabled: true
     }
   );
-  return (enableQuestions.length > 0);
 };
 
-model.create = function(contestId, questionId) {
-  var onGetEnabledQuestions;
-  onGetEnabledQuestions = function(enabledQuestions) {
-    if(enabledQuestions.length > 0) {
+/*
+ * 設問を開始時に使用される。
+ * 他に有効なanswerableQuestionがないか確認し、
+ * なければ引数のquestionに対応するanswerableQuestionを作成して返し、
+ * 他に有効なanswerableQuestionがあればその値を返す。
+ * questionが空で要求された場合は空を返す(次の設問がない場合を想定)
+ */
+model.create = function(contestId, question) {
+  var onGetEnabledQuestion;
+  if(!question._id) {
+    return {};
+  }
+  onGetEnabledQuestion = function(enabledQuestion) {
+    if(enabledQuestion._id) {
       return client.create(
         TABLE_NAME,
         {
-          questionId: questionId,
+          question: question,
           contestId: contestId,
           startDt: dt.now(),
           isEnabled: true
         }
       );
     } else {
-      return {};
+      console.log('他に有効なanswerableQuestionが存在します');
+      return enabledQuestion;
     }
   };
-  return model.getEnabledQuestions()
-    .then(onGetEnabledQuestions);
+  return model.getEnabledQuestion()
+    .then(onGetEnabledQuestion);
 };
 
 model.finish = function(id) {

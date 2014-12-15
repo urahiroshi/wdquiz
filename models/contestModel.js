@@ -25,11 +25,22 @@ model.readOne = function(id) {
   );
 };
 
+model.readNotFinished = function() {
+  return client.readOne(
+    TABLE_NAME,
+    {
+      isFinished: false
+    }
+  );
+};
+
 model.finishOrder = function(id, order) {
   return client.update(
     TABLE_NAME,
     {
-      _id: id,
+      _id: id
+    },
+    {
       finishedOrder: order
     }
   );

@@ -8,7 +8,7 @@ module.exports = function(grunt) {
           bare: true
         },
         files: {
-          'public/js/wdquiz.js': 'public/coffee/wdquiz.coffee',
+          'public/js/wdquiz.js': ['public/coffee/wdquiz.coffee', 'public/coffee/wdquiz.config.coffee', 'public/coffee/modules/*.coffee'],
           'public/js/wdquiz.question.js': ['public/coffee/wdquiz.question.coffee',
                                            'public/coffee/models/wdquiz.question.*.coffee',
                                            'public/coffee/views/wdquiz.question.*.coffee']
@@ -18,9 +18,6 @@ module.exports = function(grunt) {
     jst: {
       compile: {
         options: {
-          templateSettings: {
-            interpolate: /\{\{(.*?)\}\}/g
-          },
           processName: function(fileName) {
             return fileName.replace(/(public\/templates\/|.html)/g, '');
           }

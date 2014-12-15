@@ -1,4 +1,9 @@
 <div>it is base Layout Template !!
-  <div id="question">question area</div>
-  <div id="choices">choices area</div>
+  <div id="timer"><%= _timer %></div>
+  <div id="question"><%= answerableQuestion.question.text %></div>
+  <div id="choices">
+    <% _.each(answerableQuestion.question.choices, function(choice) { %>
+      <div><%= choice.label %></div>
+    <% }); %>
+  </div>
 </div>
