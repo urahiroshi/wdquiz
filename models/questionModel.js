@@ -18,7 +18,13 @@ model.getOne = function(id) {
 };
 
 model.getAll = function() {
-  return client.read(TABLE_NAME, {});
+  return client.read(
+    TABLE_NAME,
+    {
+      $query: {},
+      $orderby: { order: 1 }
+    }
+  );
 };
 
 model.getValid = function(questions) {

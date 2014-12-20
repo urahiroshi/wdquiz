@@ -1,0 +1,45 @@
+<div>
+  <p>設問情報を入力してください。</p>
+  <div>
+    <input type="button" class="btnAdd" value="追加" />
+  </div>
+  <table>
+    <thead>
+      <tr>
+        <th>order</th>
+        <th>text</th>
+        <th>choices</th>
+        <th>correctNumber</th>
+        <th>timeout</th>
+        <th>操作</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% _.each(question, function(aQuestion) { %>
+      <tr>
+        <td><%= aQuestion.order %></td>
+        <td><%= aQuestion.text %></td>
+        <td>
+          <table>
+            <% _.each(aQuestion.choices, function(choice) { %>
+            <tr>
+              <td><%= choice.number %></td>
+              <td><%= choice.label %></td>
+              <td><%= choice.image %></td>
+            </tr>
+            <% }); %>
+          </table>
+        </td>
+        <td><%= aQuestion.correctNumber %></td>
+        <td><%= aQuestion.timeout %></td>
+        <td>
+          <div id="<%= aQuestion._id %>">
+            <input type="button" class="btnEdit" value="編集" />
+            <input type="button" class="btnDelete" value="削除" />
+          </div>
+        </td>
+      </tr>
+      <% }); %>
+    </tbody>
+  </table>
+</div>
