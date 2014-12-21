@@ -4,34 +4,50 @@ wdquiz.admin.questionView = Marionette.ItemView.extend
     @listenTo @model, 'change', @render
   ui:
     modal: "#modal"
-    addButon: ".btnAdd"
+    addButton: ".btnAdd"
     editButtons: ".btnEdit"
     deleteButtons: ".btnDelete"
   _onClickAdd: ->
     console.log 'onClickAdd'
   _onClickEdit: (event) ->
-    id = event.target.parent().attr('id')
+    id = $(event.target).parent().attr('id')
     console.log 'onClickEdit: ' + id
   _onClickDelete: (event) ->
-    id = event.target.parent().attr('id')
+    id = $(event.target).parent().attr('id')
     console.log 'onClickDelete: ' + id
-  onRender: ->
-    addButon.on(
+  _addOnClickDelete: (index, elem) ->
+    $(elem).on(
       'click'
-      _.bind(@_onClickAdd, @)
+      _.bind(@_onClickDelete, @)
     )
-    removeButtons.on(
-      'click'
-      _.bind(@_onClickRemove, @)
-    )
-    editButtons.on(
+  _addOnClickEdit: (index, elem) ->
+    $(elem).on(
       'click'
       _.bind(@_onClickEdit, @)
     )
+  onRender: ->
+    if (@ui.addButton)
+      $(@ui.addButton).on(
+        'click'
+        _.bind(@_onClickAdd, @)
+      )
+    if (@ui.deleteButtons)
+      $.each(
+        @ui.deleteButtons
+        _.bind(@_addOnClickDelete, @)
+      )
+    if (@ui.editButtons)
+      $.each(
+        @ui.editButtons
+        _.bind(@_addOnClickEdit, @)
+      )
   onShow: ->
     wdquiz.questionClient.getAll(
-      (result) ->
-        @model.set(question: result)
+      _.bind(
+        (result) ->
+          @model.set(question: result)
+        @
+      )
       () ->
         console.log 'error: questionClient.getAll'
     )

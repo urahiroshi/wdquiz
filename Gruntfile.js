@@ -8,10 +8,22 @@ module.exports = function(grunt) {
           bare: true
         },
         files: {
-          'public/js/wdquiz.js': ['public/coffee/wdquiz.coffee', 'public/coffee/wdquiz.config.coffee', 'public/coffee/modules/*.coffee'],
-          'public/js/wdquiz.question.js': ['public/coffee/wdquiz.question.coffee',
-                                           'public/coffee/models/wdquiz.question.*.coffee',
-                                           'public/coffee/views/wdquiz.question.*.coffee']
+          'public/js/wdquiz.js': [
+            'public/coffee/wdquiz.coffee',
+            'public/coffee/wdquiz.config.coffee',
+            'public/coffee/modules/*.coffee'
+          ],
+          'public/js/wdquiz.question.js': [
+            'public/coffee/wdquiz.question.coffee',
+            'public/coffee/models/wdquiz.question.*.coffee',
+            'public/coffee/views/wdquiz.question.*.coffee'
+          ],
+          'public/js/wdquiz.admin.js': [
+            'public/coffee/wdquiz.admin.coffee',
+            'public/coffee/routers/wdquiz.admin.*.coffee',
+            'public/coffee/models/wdquiz.admin.*.coffee',
+            'public/coffee/views/wdquiz.admin.*.coffee'
+          ]
         }
       }
     },
