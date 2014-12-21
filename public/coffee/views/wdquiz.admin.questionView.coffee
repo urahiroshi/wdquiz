@@ -9,39 +9,28 @@ wdquiz.admin.questionView = Marionette.ItemView.extend
     deleteButtons: ".btnDelete"
   _onClickAdd: ->
     console.log 'onClickAdd'
-  _onClickEdit: (event) ->
-    id = $(event.target).parent().attr('id')
+  _onClickEdit: (id) ->
     console.log 'onClickEdit: ' + id
-  _onClickDelete: (event) ->
-    id = $(event.target).parent().attr('id')
+  _onClickDelete: (id) ->
     console.log 'onClickDelete: ' + id
-  _addOnClickDelete: (index, elem) ->
-    $(elem).on(
-      'click'
-      _.bind(@_onClickDelete, @)
-    )
-  _addOnClickEdit: (index, elem) ->
-    $(elem).on(
-      'click'
-      _.bind(@_onClickEdit, @)
-    )
   onRender: ->
     if (@ui.addButton)
-      $(@ui.addButton).on(
-        'click'
-        _.bind(@_onClickAdd, @)
-      )
+      $(@ui.addButton).on 'click', ->
+        wdquiz.admin.events.trigger('click:add')
     if (@ui.deleteButtons)
-      $.each(
-        @ui.deleteButtons
-        _.bind(@_addOnClickDelete, @)
-      )
+      @ui.deleteButtons.each ->
+        id = $(this).parent().attr('id')
+        $(this).on 'click', ->
+          wdquiz.admin.events.trigger('click:delete', id)
     if (@ui.editButtons)
-      $.each(
-        @ui.editButtons
-        _.bind(@_addOnClickEdit, @)
-      )
+      @ui.editButtons.each ->
+        id = $(this).parent().attr('id')
+        $(this).on 'click', ->
+          wdquiz.admin.events.trigger('click:edit', id)
   onShow: ->
+    @listenTo(wdquiz.admin.events, 'click:add', @_onClickAdd)
+    @listenTo(wdquiz.admin.events, 'click:edit', @_onClickEdit)
+    @listenTo(wdquiz.admin.events, 'click:delete', @_onClickDelete)
     wdquiz.questionClient.getAll(
       _.bind(
         (result) ->

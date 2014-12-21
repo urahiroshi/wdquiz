@@ -1,5 +1,6 @@
 wdquiz.admin = {}
 wdquiz.addInitializer ->
+  wdquiz.admin.events = _.extend({}, Backbone.Events)
   console.log "router start"
   controller = new wdquiz.admin.controller()
   router = new wdquiz.admin.router(controller: controller)
