@@ -1,22 +1,26 @@
 wdquiz.module(
   'apiClient'
   (module, app, Backbone, Marionette, $, _) ->
-    _ajax = (type) ->
+    _ajax = (type, option) ->
       return (url, data, onSuccess, onError) ->
-        $.ajax(
-          url: url
-          type: type
-          data: data
-        ) .done (result)->
-            if(onSuccess)
-              onSuccess(result)
+        option = option || {}
+        option.url = url
+        option.type = type
+        if (option.dataType == 'json')
+          option.data = JSON.stringify data
+        else
+          option.data = data
+        $.ajax(option)
+          .done (result)->
+            onSuccess(result) if onSuccess
           .fail ->
-            if(onError)
-              onError()
+            onError() if onError
+    _json = (type) ->
+      return _ajax type, {dataType: 'json', contentType: 'application/json'}
     _.extend this, {
-      post: _ajax 'POST'
+      post: _json 'POST'
       get: _ajax 'GET'
-      put: _ajax 'PUT'
+      put: _json 'PUT'
       delete: _ajax 'DELETE'
     }
 )

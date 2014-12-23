@@ -101,7 +101,7 @@ router.post('/question/', function(req, res) {
     order: req.body.order,
     text: req.body.text,
     choices: req.body.choices,
-    correctAnswer: req.body.correctAnswer,
+    correctNumber: req.body.correctNumber,
     timeout: req.body.timeout
   };
   questionModel.create(question)
@@ -122,7 +122,7 @@ router.put('/question/:id', function(req, res) {
     order: req.body.order,
     text: req.body.text,
     choices: req.body.choices,
-    correctAnswer: req.body.correctAnswer,
+    correctNumber: req.body.correctNumber,
     timeout: req.body.timeout
   };
   questionModel.update(id, updateMap)
