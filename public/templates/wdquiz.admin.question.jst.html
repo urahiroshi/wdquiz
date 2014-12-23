@@ -1,14 +1,14 @@
 <div>
   <div class="modal-overlay">
-    <div id="modal" class="modal">
+    <div id="modal" class="question-modal">
     </div>
   </div>
 
   <p>設問情報を入力してください。</p>
-  <div>
-    <input type="button" class="btnAdd" value="追加" />
-  </div>
-  <table>
+  <p>
+    <input type="button" class="btn btnAdd" value="追加" />
+  </p>
+  <table class="table table-bordered">
     <thead>
       <tr>
         <th>order</th>
@@ -25,22 +25,33 @@
         <td><%= question.order %></td>
         <td><%= question.text %></td>
         <td>
-          <table>
-            <% _.each(question.choices, function(choice) { %>
-            <tr>
-              <td><%= choice.number %></td>
-              <td><%= choice.label %></td>
-              <td><%= choice.image %></td>
-            </tr>
-            <% }); %>
+          <% if(question.choices && question.choices.length > 0) { %>
+          <table class="table">
+            <thead>
+              <tr>
+                <th>回答番号</th>
+                <th>ラベル</th>
+                <th>画像</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% _.each(question.choices, function(choice) { %>
+              <tr>
+                <td><%= choice.number %></td>
+                <td><%= choice.label %></td>
+                <td><%= choice.image %></td>
+              </tr>
+              <% }); %>
+            </tbody>
           </table>
+          <% } %>
         </td>
         <td><%= question.correctNumber %></td>
         <td><%= question.timeout %></td>
         <td>
           <div id="<%= question._id %>">
-            <input type="button" class="btnEdit" value="編集" />
-            <input type="button" class="btnDelete" value="削除" />
+            <input type="button" class="btn btnEdit" value="編集" />
+            <input type="button" class="btn btnDelete" value="削除" />
           </div>
         </td>
       </tr>
