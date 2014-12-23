@@ -23,6 +23,23 @@ model.getEnabledQuestion = function() {
   );
 };
 
+model.get = function(contestId) {
+  return client.read(
+    TABLE_NAME,
+    {
+      contestId: contestId,
+      $orderby: { startDt: 1 }
+    }
+  );
+};
+
+model.isTimeout(id) {
+  return model.getOne(id)
+    .then(function(answerableQuestion) {
+      return (answerableQuestion.endDt < dt.now());
+    });
+};
+
 /*
  * 設問を開始時に使用される。
  * 他に有効なanswerableQuestionがないか確認し、
@@ -36,13 +53,15 @@ model.create = function(contestId, question) {
     return {};
   }
   onGetEnabledQuestion = function(enabledQuestion) {
+    var now = dt.now();
     if(enabledQuestion._id) {
       return client.create(
         TABLE_NAME,
         {
           question: question,
           contestId: contestId,
-          startDt: dt.now(),
+          startDt: now,
+          endDt: now.addSeconds(enabledQuestion.timeout),
           isEnabled: true
         }
       );

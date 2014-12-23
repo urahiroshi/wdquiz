@@ -5,16 +5,35 @@ var client = require('./dbClient'),
     dt = require('./dtHandler'),
     TABLE_NAME = 'answer';
 
-model.create = function(entryId, answerableQuestionId, answer, callback) {
+model.create = function(entryId, answerableQuestionId, answerNumber) {
   return client.create(
     TABLE_NAME,
     {
       entryId: entryId,
       answerableQuestionId: answerableQuestionId,
-      answer: answer,
+      answerNumber: answerNumber,
       answerDt: dt.now()
-    },
-    callback
+    }
+  );
+};
+
+model.get = function(answerableQuestionId) {
+  return client.read(
+    TABLE_NAME,
+    {
+      $query: {answerableQuestionId: answerableQuestionId},
+      $orderby: { answerDt: 1 }
+    }
+  );
+};
+
+model.getOne = function(answerableQuestionId, entryId) {
+  return client.readOne(
+    TABLE_NAME,
+    {
+      answerableQuestionId: answerableQuestionId,
+      entryId: entryId
+    }
   );
 };
 
