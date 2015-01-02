@@ -14,17 +14,8 @@ model.getOne = function(id) {
   );
 };
 
-model.getEnabledQuestion = function() {
-  return client.readOne(
-    TABLE_NAME,
-    {
-      isEnabled: true
-    }
-  );
-};
-
 model.get = function(contestId) {
-  return client.read(
+  return client.readOne(
     TABLE_NAME,
     {
       contestId: contestId,
@@ -33,7 +24,17 @@ model.get = function(contestId) {
   );
 };
 
-model.isTimeout(id) {
+model.getEnabledQuestion = function(contestId) {
+  return client.readOne(
+    TABLE_NAME,
+    {
+      contestId: contestId,
+      isEnabled: true
+    }
+  );
+};
+
+model.isTimeout = function(id) {
   return model.getOne(id)
     .then(function(answerableQuestion) {
       return (answerableQuestion.endDt < dt.now());
@@ -70,7 +71,7 @@ model.create = function(contestId, question) {
       return enabledQuestion;
     }
   };
-  return model.getEnabledQuestion()
+  return model.getEnabledQuestion(contestId)
     .then(onGetEnabledQuestion);
 };
 

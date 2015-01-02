@@ -25,15 +25,13 @@ model.get = function(contestId) {
   );
 };
 
-model.getId = function(name) {
-  return client.read(
+model.getOne = function(name) {
+  return client.readOne(
     TABLE_NAME,
     {
       name: name
     }
-  ).then(function(entry) {
-    return entry.id;
-  });
+  );
 };
 
 

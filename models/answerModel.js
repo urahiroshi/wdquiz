@@ -5,23 +5,24 @@ var client = require('./dbClient'),
     dt = require('./dtHandler'),
     TABLE_NAME = 'answer';
 
-model.create = function(entryId, answerableQuestionId, answerNumber) {
+model.create = function(entryId, answerableQuestionId, answerNumber, contestId, startDt) {
   return client.create(
     TABLE_NAME,
     {
       entryId: entryId,
       answerableQuestionId: answerableQuestionId,
       answerNumber: answerNumber,
-      answerDt: dt.now()
+      contestId: contestId,
+      answerTime: dt.now() - startDt
     }
   );
 };
 
-model.get = function(answerableQuestionId) {
+model.get = function(query) {
   return client.read(
     TABLE_NAME,
     {
-      $query: {answerableQuestionId: answerableQuestionId},
+      $query: query,
       $orderby: { answerDt: 1 }
     }
   );
@@ -33,6 +34,18 @@ model.getOne = function(answerableQuestionId, entryId) {
     {
       answerableQuestionId: answerableQuestionId,
       entryId: entryId
+    }
+  );
+};
+
+model.update = function(id, isCorrest) {
+  return client.update(
+    TABLE_NAME,
+    {
+      _id: id
+    },
+    {
+      isCorrect: isCorrect
     }
   );
 };
