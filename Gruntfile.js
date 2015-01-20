@@ -23,6 +23,11 @@ module.exports = function(grunt) {
             'public/coffee/routers/wdquiz.admin.*.coffee',
             'public/coffee/models/wdquiz.admin.*.coffee',
             'public/coffee/views/wdquiz.admin.*.coffee'
+          ],
+          'public/js/wdquiz.answer.js': [
+            'public/coffee/wdquiz.answer.coffee',
+            'public/coffee/models/wdquiz.answer.*.coffee',
+            'public/coffee/views/wdquiz.answer.*.coffee'
           ]
         }
       }

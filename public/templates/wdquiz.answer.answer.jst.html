@@ -1,0 +1,10 @@
+<div>
+  <%= question.text %>
+</div>
+<div>
+  <input type="hidden" id="questionId" value="<%= question._id %>" />
+  <% _.each(question.choices, function(choice) { %>
+  <input type="button" id="choice_<%= choice.number %>" class="btnChoice"
+          value="<%= choice.number %>番" />
+  <% }); %>
+</div>

@@ -98,9 +98,21 @@ router.post('/answerableQuestion/', function(req, res) {
 
 // 設問要求
 router.get('/answerableQuestion/', function(req, res) {
-  var contestId = res.query.contestId;
+  var contestId = res.query.contestId,
+      hideAnswer;
+  hideAnswer = function(answerableQuestion) {
+    var question = {
+      order: answerableQuestion.order,
+      text: answerableQuestion.text,
+      choices: answerableQuestion.choices,
+      timeout: answerableQuestion.timeout
+    };
+    answerableQuestion.question = question;
+    return answerableQuestion;
+  };
   answerableQuestionModel.getEnabledQuestion(contestId)
-    .then(onSuccessBaseGen(res), onErrorBaseGen(res));
+    .then(hideAnswer)
+    .done(onSuccessBaseGen(res), onErrorBaseGen(res));
 });
 
 // 設問終了

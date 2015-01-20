@@ -47,6 +47,8 @@ wdquiz.module(
   (module, app, Backbone, Marionette, $, _, base) ->
     url = wdquiz.config.api.answerableQuestionUrl
     _.extend this, {
+      get: (contestId, onSuccess, onError) ->
+        base.get url, {contestId: contestId}, onSuccess, onError
       create: (contestId, onSuccess, onError) ->
         base.post url, {contestId: contestId}, onSuccess, onError
       delete: (id, onSuccess, onError) ->
@@ -66,6 +68,43 @@ wdquiz.module(
         base.post url, {}, onSuccess, onError
       finish: (id, onSuccess, onError) ->
         base.delete url + id, {}, onSuccess, onError
+      result: (id, onSuccess, onError) ->
+        base.get url + id + '/result', {}, onSuccess, onError
+    }
+  wdquiz.apiClient
+)
+
+wdquiz.module(
+  'entryClient'
+  (module, app, Backbone, Marionette, $, _, base) ->
+    url = wdquiz.config.api.entryUrl
+    _extend this, {
+      create: (contestId, name, onSuccess, onError) ->
+        base.post url, {contestId: contestId, name: name}, onSuccess, onError
+      get: (contestId, name, onSuccess, onError) ->
+        base.get url, {contestId: contestId, name: name}, onSuccess, onError
+    }
+  wdquiz.apiClient
+)
+
+wdquiz.module(
+  'answerClient'
+  (module, app, Backbone, Marionette, $, _, base) ->
+    url = wdquiz.config.api.answerUrl
+    _extend this, {
+      create: (answerableQuestionId, entryId, number, onSuccess, onError) ->
+        param = {
+          answerableQuestionId: answerableQuestionId
+          entryId: entryId
+          number: number
+        }
+        base.post url, param, onSuccess, onError
+      get: (answerableQuestionId, entryId, onSuccess, onError) ->
+        param = {
+          answerableQuestionId: answerableQuestionId
+          entryId: entryId
+        }
+        base.get url, param, onSuccess, onError
     }
   wdquiz.apiClient
 )
