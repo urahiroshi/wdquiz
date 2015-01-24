@@ -59,9 +59,9 @@ router.get('/contest/:contestId/result', function(req, res) {
   getEntryScores = function(answers) {
     var entryScores = {};
     answers.forEach(function(answer) {
-      if (answer.isCorrect) {
-        entryScores[answer.entryId] = answer.entryId || { totalCorrect: 0, totalTime: 0 };
-        entryScores[answer.entryId].totalCorrect += 1;
+      if (answer.answerPoint > 0) {
+        entryScores[answer.entryId] = answer.entryId || { totalPoint: 0, totalTime: 0 };
+        entryScores[answer.entryId].totalPoint += answer.answerPoint;
         entryScores[answer.entryId].totalTime += answer.answerTime;
       }
     });
@@ -144,8 +144,13 @@ router.delete('/answerableQuestion/:id', function(req, res) {
           updateFunctions;
       updateFunctions = answers.map(function(answer) {
         return function() {
-          var isCorrect = (correctNumber === answer.answerNumber);
-          return answerModel.update(answer._id, isCorrect);
+          var answerPoint;
+          if (correctNumber === answer.answerNumber) {
+            answerPoint = 1;
+          } else {
+            answerPoint = 0;
+          }
+          return answerModel.update(answer._id, answerPoint);
         };
       });
       return Q.all(updateFunctions);
@@ -248,9 +253,26 @@ router.post('/answer/', function(req, res) {
 // 回答結果取得
 router.get('/answer/', function(req, res) {
   var answerableQuestionId = req.query.answerableQuestionId,
-      entryId = req.query.entryId;
-  answerModel.getOne(answerableQuestionId, entryId)
-    .done(onSuccessBaseGen(res), onErrorBaseGen(res));
+      entryId = req.query.entryId,
+      contestId = req.query.contestId,
+      query;
+  if (entryId) {
+    answerModel.getOne(answerableQuestionId, entryId)
+      .done(onSuccessBaseGen(res), onErrorBaseGen(res));
+  } else {
+    // TODO: Answerユーザーからはアクセスできないように。。
+    if (answerableQuestionId) {
+      query = {answerableQuestionId: answerableQuestionId};
+    } else if (contestId) {
+      query = {contestId: contestId};
+    }
+    if (query) {
+      answerModel.get(query)
+        .done(onSuccessBaseGen(res), onErrorBaseGen(res));
+    } else {
+      onErrorBaseGen(res)("invalid arguments");
+    }
+  }
 });
 
 module.exports = router;

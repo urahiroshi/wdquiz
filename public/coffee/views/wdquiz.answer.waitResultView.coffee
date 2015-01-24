@@ -6,12 +6,12 @@ wdquiz.answer.waitResultView = Backbone.Marionette.ItemView.extend
     # TODO: 次のページに必要な情報を渡す
     wdquiz.answer.goto.waitQuiz(@model.toJSON().contest)
   _waitGetResult: () ->
-    wdquiz.answerClient.get(
+    wdquiz.answerClient.getOne(
       @_answerableQuestionId
       @_entryId
       (result) =>
-        if (result.isCorrect != undefined)
-          if (result.isCorrect)
+        if (result.answerPoint != undefined)
+          if (result.answerPoint > 0)
             text = '正解しました！'
           else
             text = '残念、不正解です。'

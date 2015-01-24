@@ -9,6 +9,7 @@ wdquiz.question.quizView = Backbone.Marionette.ItemView.extend
   initialize: ->
     @listenTo @model, 'change', @render
   _onDeleteQuestion: (result) ->
+    # TODO: result画面に移るケースも追加。
     wdquiz.question.goto.wait @model.get('contest')
   _countDown: ->
     @_timer = @_timer - 1

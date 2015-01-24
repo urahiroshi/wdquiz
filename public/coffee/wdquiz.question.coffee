@@ -29,10 +29,15 @@ wdquiz.question = do() ->
         model = new wdquiz.question.waitModel
           contest: contest
         _showContainer new wdquiz.question.waitView model: model
-      result: (contest) ->
+      result: (contest, answerableQuestion) ->
         model = new wdquiz.question.resultModel
           contest: contest
+          answerableQuestion: answerableQuestion
         _showContainer new wdquiz.question.resultView model: model
+      ending: (contest) ->
+        model = new wdquiz.question.endingModel
+          contest: contest
+        _showContainer new wdquiz.question.endingView model: model
   }
 
   # initialize on start

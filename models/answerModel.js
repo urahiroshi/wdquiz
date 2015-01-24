@@ -38,14 +38,14 @@ model.getOne = function(answerableQuestionId, entryId) {
   );
 };
 
-model.update = function(id, isCorrest) {
+model.update = function(id, answerPoint) {
   return client.update(
     TABLE_NAME,
     {
       _id: id
     },
     {
-      isCorrect: isCorrect
+      answerPoint: answerPoint
     }
   );
 };

@@ -1,3 +1,19 @@
 <div>
-  result page.
+  早押しランキング
+</div>
+<div>
+  <table>
+    <thead>
+      <tr>
+        <th>名前</th><th>回答時間</th>
+      </tr>
+    </thead>
+    <tbody>
+    <% _.each(validEntries, function(entry) { %>
+      <tr>
+        <td><%= entry.name %></td><td><%= entry.answerTime %></td>
+      </tr>
+    <% } %>
+    </tbody>
+  </table>
 </div>
