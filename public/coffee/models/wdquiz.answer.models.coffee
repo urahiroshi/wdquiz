@@ -5,7 +5,7 @@ wdquiz.answer.entryModel = Backbone.Model.extend
 wdquiz.answer.answerModel = Backbone.Model.extend
   defaults:
     contest: {}
-    question: {}
+    answerableQuestion: {}
 
 wdquiz.answer.waitContestModel = Backbone.Model.extend
   defaults:
@@ -20,4 +20,4 @@ wdquiz.answer.waitResultModel = Backbone.Model.extend
   defaults:
     message: ""
     contest: {}
-    question: {}
+    answerableQuestion: {}

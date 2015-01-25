@@ -1,16 +1,25 @@
 wdquiz.answer.waitQuizView = Backbone.Marionette.ItemView.extend
   template: JST["wdquiz.answer.wait.jst"]
-  _waitQuizStarted: (onStartQuiz) ->
+  _retryAfterWait: () ->
+    setTimeout(
+      () =>
+        @_waitQuizStarted()
+      500
+    )
+  _waitQuizStarted: () ->
     contest = @model.toJSON().contest
     wdquiz.answerableQuestionClient.get(
       contest._id
       (result) =>
         if (result._id)
-          onStartQuiz(contest, result)
+          console.log("goto quiz: " + result._id)
+          wdquiz.answer.goto.answer(contest, result)
         else
-          setTimeout(@_waitQuizStarted, 500)
-      setTimeout(@_waitQuizStarted, 500)
+          @_retryAfterWait()
+      () =>
+        console.log("error: answerableQuestion.get")
+        @_retryAfterWait()
     )
   onShow: ->
-    @_waitQuizStarted(wdquiz.answer.goto.answer)
+    @_waitQuizStarted()
 

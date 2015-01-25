@@ -1,14 +1,21 @@
 wdquiz.answer.waitContestView = Backbone.Marionette.ItemView.extend
   template: JST["wdquiz.answer.wait.jst"]
-  _waitContestStarted: (onStartContest) ->
+  _retryAfterWait: () ->
+    setTimeout(
+      () =>
+        @_waitContestStarted()
+      500
+    )
+  _waitContestStarted: () ->
     wdquiz.contestClient.getNotFinished(
       (result) =>
         if (result._id)
-          onStartContest(result)
+          wdquiz.answer.goto.entry(result)
         else
-          setTimeout(@_waitContestStarted, 500)
-      setTimeout(@_waitContestStarted, 500)
+          @_retryAfterWait()
+      () =>
+        @_retryAfterWait()
     )
   onShow: ->
-    @_waitContestStarted(wdquiz.answer.goto.entry)
+    @_waitContestStarted()
 

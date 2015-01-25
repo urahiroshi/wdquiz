@@ -25,7 +25,7 @@ wdquiz.answer = do() ->
       entry: (contest) ->
         model = new wdquiz.answer.entryModel
           contest: contest
-        _showContainer new wdquiz.question.entryView model: model
+        _showContainer new wdquiz.answer.entryView model: model
       waitContest: () ->
         model = new wdquiz.answer.waitContestModel
           message: 'クイズが開始するまで待機しています。'
@@ -35,16 +35,16 @@ wdquiz.answer = do() ->
           message: '次の問題までお待ちください・・・'
           contest: contest
         _showContainer new wdquiz.answer.waitQuizView model: model
-      waitResult: (contest, question) ->
+      waitResult: (contest, answerableQuestion) ->
         model = new wdquiz.answer.waitResultModel
           message: '回答を送信しました。'
           contest: contest
-          question: question
+          answerableQuestion: answerableQuestion
         _showContainer new wdquiz.answer.waitResultView model: model
-      answer: (contest, question) ->
+      answer: (contest, answerableQuestion) ->
         model = new wdquiz.answer.answerModel
           contest: contest
-          question: question
+          answerableQuestion: answerableQuestion
         _showContainer new wdquiz.answer.answerView model: model
   }
 

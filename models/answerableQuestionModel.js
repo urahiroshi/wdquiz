@@ -18,7 +18,9 @@ model.get = function(contestId) {
   return client.readOne(
     TABLE_NAME,
     {
-      contestId: contestId,
+      $query: {
+        contestId: contestId
+      },
       $orderby: { startDt: 1 }
     }
   );
@@ -56,6 +58,9 @@ model.create = function(contestId, question) {
   onGetEnabledQuestion = function(enabledQuestion) {
     var now = dt.now();
     if(enabledQuestion._id) {
+      console.log('他に有効なanswerableQuestionが存在します');
+      return enabledQuestion;
+    } else {
       return client.create(
         TABLE_NAME,
         {
@@ -66,9 +71,6 @@ model.create = function(contestId, question) {
           isEnabled: true
         }
       );
-    } else {
-      console.log('他に有効なanswerableQuestionが存在します');
-      return enabledQuestion;
     }
   };
   return model.getEnabledQuestion(contestId)

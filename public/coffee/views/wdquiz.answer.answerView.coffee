@@ -11,15 +11,19 @@ wdquiz.answer.answerView = Backbone.Marionette.ItemView.extend
         (result) =>
           wdquiz.answer.goto.waitResult(
             @model.toJSON().contest
-            @model.toJSON().question
+            @model.toJSON().answerableQuestion
           )
         () =>
-          setTimeout(@_sendChoice(number), 100)
+          setTimeout(
+            () =>
+              @_sendChoice(number)
+            100
+          )
       )
   onClickChoice: (event) ->
     id = $(event.target).attr('id')
     number = id.split('_')[1]
     @_sendChoice(number)()
   initialize: ->
-    @_answerableQuestionId = @model.toJSON().question._id
+    @_answerableQuestionId = @model.toJSON().answerableQuestion._id
 

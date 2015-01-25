@@ -20,13 +20,15 @@ wdquiz.question.resultView = Marionette.ItemView.extend
     @listenTo @model, 'change', @render
     wdquiz.answerClient.get(
       @model.toJSON().answerableQuestion._id
-      @_onGetAnswers
+      (answers) =>
+        @_onGetAnswers(answers)
       () ->
         console.log("error on answerClient.get")
     )
     wdquiz.entryClient.get(
       @model.toJSON().contest._id
-      @_onGetEntries
+      (entries) =>
+        @_onGetEntries(entries)
       () ->
         console.log("error on entryClient.get")
     )

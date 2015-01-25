@@ -78,7 +78,7 @@ wdquiz.module(
   'entryClient'
   (module, app, Backbone, Marionette, $, _, base) ->
     url = wdquiz.config.api.entryUrl
-    _extend this, {
+    _.extend this, {
       create: (contestId, name, onSuccess, onError) ->
         base.post url, {contestId: contestId, name: name}, onSuccess, onError
       get: (contestId, onSuccess, onError) ->
@@ -93,7 +93,7 @@ wdquiz.module(
   'answerClient'
   (module, app, Backbone, Marionette, $, _, base) ->
     url = wdquiz.config.api.answerUrl
-    _extend this, {
+    _.extend this, {
       create: (answerableQuestionId, entryId, number, onSuccess, onError) ->
         param = {
           answerableQuestionId: answerableQuestionId

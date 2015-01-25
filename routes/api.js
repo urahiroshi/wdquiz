@@ -10,13 +10,20 @@ var express = require('express'),
     router = express.Router(),
     onErrorBaseGen,
     onSuccessBaseGen,
-    onWriteFinishedBaseGen;
+    onWriteFinishedBaseGen,
+    returnError,
+    onSuccessReturnDeepObj;
 
 // ---- private functions ----
+
+returnError = function(statusCode, log) {
+  console.log(log);
+  res.status(statusCode).send();
+};
+
 onErrorBaseGen = function(res) {
   return function(err) {
-    console.log(err);
-    res.status(500).send();
+    returnError(500, err);
   };
 };
 
@@ -98,16 +105,15 @@ router.post('/answerableQuestion/', function(req, res) {
 
 // 設問要求
 router.get('/answerableQuestion/', function(req, res) {
-  var contestId = res.query.contestId,
+  var contestId = req.query.contestId,
       hideAnswer;
   hideAnswer = function(answerableQuestion) {
-    var question = {
-      order: answerableQuestion.order,
-      text: answerableQuestion.text,
-      choices: answerableQuestion.choices,
-      timeout: answerableQuestion.timeout
-    };
-    answerableQuestion.question = question;
+    console.log("**** before1 ****: " + JSON.stringify(answerableQuestion));
+    if(answerableQuestion._id) {
+      answerableQuestion.question.correctNumber = -1;
+      console.log("**** before2 ****: " + JSON.stringify(answerableQuestion));
+    }
+    console.log("**** before3 ****: " + JSON.stringify(answerableQuestion));
     return answerableQuestion;
   };
   answerableQuestionModel.getEnabledQuestion(contestId)
@@ -169,11 +175,11 @@ router.delete('/answerableQuestion/:id', function(req, res) {
 // 設問作成
 router.post('/question/', function(req, res) {
   var question = {
-    order: req.body.order,
+    order: Number(req.body.order),
     text: req.body.text,
     choices: req.body.choices,
-    correctNumber: req.body.correctNumber,
-    timeout: req.body.timeout
+    correctNumber: Number(req.body.correctNumber),
+    timeout: Number(req.body.timeout)
   };
   questionModel.create(question)
     .done(onSuccessBaseGen(res), onErrorBaseGen(res));
@@ -190,11 +196,11 @@ router.put('/question/:id', function(req, res) {
   var id = req.params.id,
       updateMap;
   updateMap = {
-    order: req.body.order,
+    order: Number(req.body.order),
     text: req.body.text,
     choices: req.body.choices,
-    correctNumber: req.body.correctNumber,
-    timeout: req.body.timeout
+    correctNumber: Number(req.body.correctNumber),
+    timeout: Number(req.body.timeout)
   };
   questionModel.update(id, updateMap)
     .done(onWriteFinishedBaseGen(res), onErrorBaseGen(res));
@@ -208,7 +214,7 @@ router.delete('/question/:id', function(req, res) {
 });
 
 // 参加登録
-router.post('/entry', function(req, res) {
+router.post('/entry/', function(req, res) {
   var contestId = req.body.contestId,
       name = req.body.name;
   entryModel.create(name, contestId)
@@ -225,9 +231,9 @@ router.get('/entry/', function(req, res) {
   } else if (contestId) {
     entryModel.get(contestId)
       .done(onWriteFinishedBaseGen(res), onErrorBaseGen(res));
+  } else {
+    returnError(400, 'argument error');
   }
-  entryModel.get(contestId)
-    .done(onSuccessBaseGen(res), onErrorBaseGen(res));
 });
 
 // 回答送信

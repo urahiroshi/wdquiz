@@ -16,7 +16,7 @@ wdquiz.question.registerView = Backbone.Marionette.ItemView.extend
       @_enableKeyPress = true
     else
       wdquiz.contestClient.create(
-        (result) ->
+        (result) =>
           console.log 'create contest'
           @_contest = result
           @_enableKeyPress = true

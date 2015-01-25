@@ -83,7 +83,7 @@ client.readOne = function(table, queryMap) {
   var onCollect = function(collection, onFinish) {
     collection.find(queryMap).toArray(function(err, docs){
       var result = {};
-      if(docs.length > 0) {
+      if(docs && docs.length > 0) {
         result = docs[0];
       }
       onFinish(err, result);

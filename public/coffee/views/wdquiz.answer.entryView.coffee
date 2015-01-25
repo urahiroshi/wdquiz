@@ -15,7 +15,7 @@ wdquiz.answer.entryView = Backbone.Marionette.ItemView.extend
       contest._id
       entryName
       (result) =>
-        if(result._id)
+        if (result._id)
           wdquiz.answer.setId(result._id)
           wdquiz.answer.goto.waitQuiz(contest)
         else

@@ -3,8 +3,8 @@
 コンテスト内のすべての回答、エントリー情報を取得し、総得点と時間を計算する。
 ###
 
-wdquiz.question.resultView = Marionette.ItemView.extend
-  template: JST["wdquiz.question.result.jst"]
+wdquiz.question.endingView = Marionette.ItemView.extend
+  template: JST["wdquiz.question.ending.jst"]
   _answers: []
   _calculatingEntries: {}
   _ascOrderedEntryIds: []
@@ -34,6 +34,17 @@ wdquiz.question.resultView = Marionette.ItemView.extend
       interval: 5000
     }
   ]
+  _finishContestOnClick: ->
+    @pressKey = (keyCode) =>
+      # 'f' clicked
+      if keyCode == 102
+        wdquiz.contestClient.finish(
+          @model.toJSON().contest._id
+          () ->
+            console.log('コンテストを完了しました。')
+          () ->
+            console.log('コンテスト完了に失敗しました。')
+        )
   _displayRanking: (endRanking, interval) ->
     setTimeout(
       () =>
@@ -57,11 +68,11 @@ wdquiz.question.resultView = Marionette.ItemView.extend
     if startRanking > entryCount
       startRanking = entryCount
     @_displayingRanking = startRanking
-    @_displayingRanking(endRanking, interval)
+    @_displayRanking(endRanking, interval)
     return true
   _displayRankingsBlock: (blockIndex) ->
     display = @_displayBlock[blockIndex]
-    @_displayRankings(display.start, display,end, display.interval)
+    @_displayRankings(display.start, display.end, display.interval)
     displayFinishedChecker = setInterval(
       if @_displayingRanking == display.end
         clearInterval(displayFinishedChecker)
@@ -75,6 +86,8 @@ wdquiz.question.resultView = Marionette.ItemView.extend
         @pressKey = null
         if blockIndex < @_displayBlock.length
           @_displayRankingsBlock(blockIndex)
+        else
+          @_finishContestOnClick()
   _onGetAnswersAndEntries: () ->
     for answer in @_answers
       if answer.answerPoint > 0
@@ -108,13 +121,15 @@ wdquiz.question.resultView = Marionette.ItemView.extend
     @listenTo @model, 'change', @render
     wdquiz.answerClient.get(
       @model.toJSON().contest._id
-      @_onGetAnswers
+      (answers) =>
+        @_onGetAnswers(answers)
       () ->
         console.log("error on answerClient.get")
     )
     wdquiz.entryClient.get(
       @model.toJSON().contest._id
-      @_onGetEntries
+      (entries) =>
+        @_onGetEntries(entries)
       () ->
         console.log("error on entryClient.get")
     )

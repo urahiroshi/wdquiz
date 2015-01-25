@@ -2,6 +2,7 @@
 
 var client = require('./dbClient'),
     model = {},
+    dt = require('./dtHandler'),
     TABLE_NAME = 'entry';
 
 model.create = function(name, contestId) {
