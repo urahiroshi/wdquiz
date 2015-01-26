@@ -19,7 +19,7 @@ wdquiz.answer.entryView = Backbone.Marionette.ItemView.extend
           wdquiz.answer.setId(result._id)
           wdquiz.answer.goto.waitQuiz(contest)
         else
-          console.log('エントリーの作成に失敗しました。(戻り値不正)')
+          alert('その名前は既に使用されています。違う名前を入力してください。')
       ->
         console.log('エントリーの作成に失敗しました。(処理失敗)')
     )

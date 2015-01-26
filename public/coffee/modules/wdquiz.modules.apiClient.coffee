@@ -83,8 +83,8 @@ wdquiz.module(
         base.post url, {contestId: contestId, name: name}, onSuccess, onError
       get: (contestId, onSuccess, onError) ->
         base.get url, {contestId: contestId}, onSuccess, onError
-      getOne: (contestId, name, onSuccess, onError) ->
-        base.get url, {contestId: contestId, name: name}, onSuccess, onError
+      getOne: (contestId, id, onSuccess, onError) ->
+        base.get url, {contestId: contestId, id: id}, onSuccess, onError
     }
   wdquiz.apiClient
 )

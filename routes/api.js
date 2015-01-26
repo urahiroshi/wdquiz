@@ -224,9 +224,9 @@ router.post('/entry/', function(req, res) {
 // 参加者情報取得
 router.get('/entry/', function(req, res) {
   var contestId = req.query.contestId,
-      name = req.query.name;
-  if (name) {
-    entryModel.getOne(name)
+      id = req.query.id;
+  if (id) {
+    entryModel.getOne(id, contestId)
       .done(onWriteFinishedBaseGen(res), onErrorBaseGen(res));
   } else if (contestId) {
     entryModel.get(contestId)

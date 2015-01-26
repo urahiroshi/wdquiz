@@ -5,15 +5,34 @@ var client = require('./dbClient'),
     dt = require('./dtHandler'),
     TABLE_NAME = 'entry';
 
+// 同じnameが指定されれば作成せず、空を返す
 model.create = function(name, contestId) {
-  return client.create(
-    TABLE_NAME,
-    {
-      name: name,
-      contestId: contestId,
-      createDt: dt.now()
+  var getOne, create;
+  getOne = function() {
+    return client.read(
+      TABLE_NAME,
+      {
+        name: name,
+        contestId: contestId
+      }
+    );
+  };
+  create = function(sameName) {
+    if (sameName.length === 0) {
+      return client.create(
+        TABLE_NAME,
+        {
+          name: name,
+          contestId: contestId,
+          createDt: dt.now()
+        }
+      );
+    } else {
+      return {};
     }
-  );
+  };
+  return getOne()
+    .then(create);
 };
 
 model.get = function(contestId) {
@@ -26,11 +45,12 @@ model.get = function(contestId) {
   );
 };
 
-model.getOne = function(name) {
+model.getOne = function(id, contestId) {
   return client.readOne(
     TABLE_NAME,
     {
-      name: name
+      _id: id,
+      contestId: contestId
     }
   );
 };
