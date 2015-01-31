@@ -34,10 +34,10 @@ wdquiz.question = do() ->
           contest: contest
           answerableQuestion: answerableQuestion
         _showContainer new wdquiz.question.resultView model: model
-      ending: (contest) ->
-        model = new wdquiz.question.endingModel
-          contest: contest
-        _showContainer new wdquiz.question.endingView model: model
+      ending: () ->
+        collection = new wdquiz.question.endingModel()
+        _showContainer new wdquiz.question.endingView collection: collection
+    contest: null
   }
 
   # initialize on start

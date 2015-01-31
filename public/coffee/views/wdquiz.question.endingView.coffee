@@ -3,8 +3,14 @@
 コンテスト内のすべての回答、エントリー情報を取得し、総得点と時間を計算する。
 ###
 
-wdquiz.question.endingView = Marionette.ItemView.extend
+wdquiz.question.scoreView = Marionette.ItemView.extend
+  template: JST["wdquiz.question.score.jst"]
+  tagName: "tr"
+
+wdquiz.question.endingView = Marionette.CompositeView.extend
   template: JST["wdquiz.question.ending.jst"]
+  childView: wdquiz.question.scoreView
+  childViewContainer: "#scores"
   _answers: []
   _calculatingEntries: {}
   _ascOrderedEntryIds: []
@@ -34,30 +40,36 @@ wdquiz.question.endingView = Marionette.ItemView.extend
       interval: 5000
     }
   ]
-  _finishContestOnClick: ->
+  _finishContestOnClick: () ->
     @pressKey = (keyCode) =>
       # 'f' clicked
       if keyCode == 102
         wdquiz.contestClient.finish(
-          @model.toJSON().contest._id
+          wdquiz.question.contest._id
           () ->
             console.log('コンテストを完了しました。')
           () ->
             console.log('コンテスト完了に失敗しました。')
         )
   _displayRanking: (endRanking, interval) ->
+    console.log("dispTimer: " + interval)
     setTimeout(
       () =>
         displayIndex = @_ascOrderedEntryIds.length - @_displayingRanking
+        console.log("display: " + String(displayIndex))
         entryId = @_ascOrderedEntryIds[displayIndex]
-        visibleEntries = @model.toJSON().visibleEntries
-        if displayIndex % @_displayRowsOnPage == 0
-          visibleEntries = []
-        visibleEntries.unshift(@_calculatingEntries[entryId])
-        @model.set(visibleEntries: visibleEntries)
-        if @_displayingRanking == endRanking
+        entry = @_calculatingEntries[entryId]
+        model = new wdquiz.question.scoreModel(
+          name: entry.name
+          point: entry.totalPoint
+          time: entry.totalTime
+        )
+        @collection.add model
+        # child = new wdquiz.question.scoreView(model: model)
+        # @addChild(child, wdquiz.question.scoreView)
+        if @_displayingRanking > endRanking
           @_displayingRanking -= 1
-          @_displayingRanking(endRanking, interval)
+          @_displayRanking(endRanking, interval)
       interval
     )
   _displayRankings: (startRanking, endRanking, interval) ->
@@ -71,12 +83,15 @@ wdquiz.question.endingView = Marionette.ItemView.extend
     @_displayRanking(endRanking, interval)
     return true
   _displayRankingsBlock: (blockIndex) ->
+    console.log("block: " + String(blockIndex))
     display = @_displayBlock[blockIndex]
-    @_displayRankings(display.start, display.end, display.interval)
+    if !@_displayRankings(display.start, display.end, display.interval)
+      @_displayRankingsBlock(blockIndex + 1)
     displayFinishedChecker = setInterval(
-      if @_displayingRanking == display.end
-        clearInterval(displayFinishedChecker)
-        @_displayRankingsBlockOnClick(blockIndex + 1)
+      () =>
+        if @_displayingRanking == display.end
+          clearInterval(displayFinishedChecker)
+          @_displayRankingsBlockOnClick(blockIndex + 1)
       1000
     )
   _displayRankingsBlockOnClick: (blockIndex) ->
@@ -91,7 +106,7 @@ wdquiz.question.endingView = Marionette.ItemView.extend
   _onGetAnswersAndEntries: () ->
     for answer in @_answers
       if answer.answerPoint > 0
-        entry = @_calculatingEntries[answer._id]
+        entry = @_calculatingEntries[answer.entryId]
         entry.totalPoint += answer.answerPoint
         entry.totalTime += answer.answerTime
     @_ascOrderedEntryIds = _.sortBy(
@@ -117,20 +132,18 @@ wdquiz.question.endingView = Marionette.ItemView.extend
       @_onGetAnswersAndEntries()
     else
       @_isFinishedAnswers = true
-  initialize: ->
-    @listenTo @model, 'change', @render
-    wdquiz.answerClient.get(
-      @model.toJSON().contest._id
+  onShow: ->
+    wdquiz.answerClient.getAll(
+      wdquiz.question.contest._id
       (answers) =>
         @_onGetAnswers(answers)
       () ->
         console.log("error on answerClient.get")
     )
     wdquiz.entryClient.get(
-      @model.toJSON().contest._id
+      wdquiz.question.contest._id
       (entries) =>
         @_onGetEntries(entries)
       () ->
         console.log("error on entryClient.get")
     )
-

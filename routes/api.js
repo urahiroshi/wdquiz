@@ -108,12 +108,9 @@ router.get('/answerableQuestion/', function(req, res) {
   var contestId = req.query.contestId,
       hideAnswer;
   hideAnswer = function(answerableQuestion) {
-    console.log("**** before1 ****: " + JSON.stringify(answerableQuestion));
     if(answerableQuestion._id) {
       answerableQuestion.question.correctNumber = -1;
-      console.log("**** before2 ****: " + JSON.stringify(answerableQuestion));
     }
-    console.log("**** before3 ****: " + JSON.stringify(answerableQuestion));
     return answerableQuestion;
   };
   answerableQuestionModel.getEnabledQuestion(contestId)
@@ -135,7 +132,7 @@ router.delete('/answerableQuestion/:id', function(req, res) {
   endAnswer = function(answerableQuestion) {
     var endQuestion, finishOrder, getAnswers, updateAnswers;
     endQuestion = function() {
-      return answerableQuestionModel.finish(answerableQuestion._id);
+      return answerableQuestionModel.finish(id);
     };
     finishOrder = function() {
       var order = answerableQuestion.question.order,
@@ -143,21 +140,19 @@ router.delete('/answerableQuestion/:id', function(req, res) {
       return contestModel.finishOrder(contestId, order);
     };
     getAnswers = function() {
-      return answerModel.get({answerableQuestionId: answerableQuestion._id});
+      return answerModel.get({answerableQuestionId: id});
     };
     updateAnswers = function(answers) {
       var correctNumber = answerableQuestion.question.correctNumber,
           updateFunctions;
       updateFunctions = answers.map(function(answer) {
-        return function() {
-          var answerPoint;
-          if (correctNumber === answer.answerNumber) {
-            answerPoint = 1;
-          } else {
-            answerPoint = 0;
-          }
-          return answerModel.update(answer._id, answerPoint);
-        };
+        var answerPoint;
+        if (correctNumber === answer.answerNumber) {
+          answerPoint = 1;
+        } else {
+          answerPoint = 0;
+        }
+        return answerModel.update(answer._id, answerPoint);
       });
       return Q.all(updateFunctions);
     };
@@ -166,10 +161,21 @@ router.delete('/answerableQuestion/:id', function(req, res) {
       .then(getAnswers)
       .then(updateAnswers);
   };
+  var checkSuccess = function() {
+    var result = {isSuccess: true};
+    for(var i=0; i<arguments.length; i++) {
+      if (arguments[i].nModified !== 1) {
+        result.isSuccess = false;
+        return result;
+      }
+    }
+    return result;
+  };
   answerableQuestionModel.finish(id)
     .then(getAnswerableQuestion)
     .then(endAnswer)
-    .done(onWriteFinishedBaseGen(res), onErrorBaseGen(res));
+    .spread(checkSuccess)
+    .done(function(result){ res.json(result); }, onErrorBaseGen(res));
 });
 
 // 設問作成
@@ -227,10 +233,10 @@ router.get('/entry/', function(req, res) {
       id = req.query.id;
   if (id) {
     entryModel.getOne(id, contestId)
-      .done(onWriteFinishedBaseGen(res), onErrorBaseGen(res));
+      .done(onSuccessBaseGen(res), onErrorBaseGen(res));
   } else if (contestId) {
     entryModel.get(contestId)
-      .done(onWriteFinishedBaseGen(res), onErrorBaseGen(res));
+      .done(onSuccessBaseGen(res), onErrorBaseGen(res));
   } else {
     returnError(400, 'argument error');
   }
@@ -238,18 +244,22 @@ router.get('/entry/', function(req, res) {
 
 // 回答送信
 router.post('/answer/', function(req, res) {
-  var answerableQuestionId = req.query.answerableQuestionId,
-      entryId = req.query.entryId,
-      answerNumber = req.query.number,
+  var answerableQuestionId = req.body.answerableQuestionId,
+      entryId = req.body.entryId,
+      answerNumber = Number(req.body.number),
       createAnswer;
   createAnswer = function(answerableQuestion) {
-    return answerModel.create(
-      entryId,
-      answerableQuestionId,
-      answerNumber,
-      answerableQuestion.contestId,
-      answerableQuestion.startDt
-    );
+    if (answerableQuestion._id) {
+      return answerModel.create(
+        entryId,
+        answerableQuestionId,
+        answerNumber,
+        answerableQuestion.contestId,
+        answerableQuestion.startDt
+      );
+    } else {
+      return {};
+    }
   };
   answerableQuestionModel.getOne(answerableQuestionId)
     .then(createAnswer)

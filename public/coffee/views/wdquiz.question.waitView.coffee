@@ -14,7 +14,7 @@ wdquiz.question.waitView = Marionette.ItemView.extend
       answerableQuestion = result
       wdquiz.question.goto.quiz(@_contest, answerableQuestion)
     else
-      wdquiz.question.goto.ending(@_contest)
+      wdquiz.question.goto.ending()
   pressKey: (keyCode) ->
     wdquiz.answerableQuestionClient.create(
       @_contest._id

@@ -8,14 +8,7 @@
         <th>名前</th><th>合計得点</th><th>回答時間</th>
       </tr>
     </thead>
-    <tbody>
-    <% _.each(visibleEntries, function(entry) { %>
-      <tr>
-        <td><%= entry.name %></td>
-        <td><%= entry.totalPoint %></td>
-        <td><%= entry.totalTime %></td>
-      </tr>
-    <% }); %>
+    <tbody id="scores">
     </tbody>
   </table>
 </div>

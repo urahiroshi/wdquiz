@@ -29,6 +29,7 @@ wdquiz.answer.waitContestView = Backbone.Marionette.ItemView.extend
           @_gotoNext(entryId, contest, count + 1)
         else
           wdquiz.answer.goto.entry(contest)
+    )
           
   _onContestStarted: (contest) ->
     entryId = wdquiz.answer.getId()

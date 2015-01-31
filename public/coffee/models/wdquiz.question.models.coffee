@@ -14,7 +14,11 @@ wdquiz.question.resultModel = Backbone.Model.extend
     answerableQuestion: {}
     validEntries: []
 
-wdquiz.question.endingModel = Backbone.Model.extend
-  defaults: 
-    contest: {}
-    visibleEntries: []
+wdquiz.question.scoreModel = Backbone.Model.extend
+  defaults:
+    name: ''
+    point: 0
+    time: 0
+
+wdquiz.question.endingModel = Backbone.Collection.extend
+  model: wdquiz.question.scoreModel

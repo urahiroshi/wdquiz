@@ -3,7 +3,6 @@ wdquiz.answer.waitResultView = Backbone.Marionette.ItemView.extend
   _answerableQuestionId: ''
   _entryId: ''
   _gotoNext: () ->
-    # TODO: 次のページに必要な情報を渡す
     wdquiz.answer.goto.waitQuiz(@model.toJSON().contest)
   _retryAfterWait: () ->
     setTimeout(
@@ -29,12 +28,13 @@ wdquiz.answer.waitResultView = Backbone.Marionette.ItemView.extend
           )
         else
           @_retryAfterWait()
-      @_retryAfterWait()
+      () =>
+        @_retryAfterWait()
     )
   onShow: ->
-    _waitGetResult()
+    @_waitGetResult()
   initialize: ->
     @_answerableQuestionId = @model.toJSON().answerableQuestion._id
-    @_entryId = wdquiz.answer.getid()
+    @_entryId = wdquiz.answer.getId()
     @listenTo @model, 'change', @render
 

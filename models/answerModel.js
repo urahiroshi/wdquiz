@@ -23,7 +23,7 @@ model.get = function(query) {
     TABLE_NAME,
     {
       $query: query,
-      $orderby: { answerDt: 1 }
+      $orderby: { answerTime: 1 }
     }
   );
 };

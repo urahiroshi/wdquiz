@@ -83,7 +83,7 @@ wdquiz.module(
         base.post url, {contestId: contestId, name: name}, onSuccess, onError
       get: (contestId, onSuccess, onError) ->
         base.get url, {contestId: contestId}, onSuccess, onError
-      getOne: (contestId, id, onSuccess, onError) ->
+      getOne: (id, contestId, onSuccess, onError) ->
         base.get url, {contestId: contestId, id: id}, onSuccess, onError
     }
   wdquiz.apiClient
@@ -104,6 +104,11 @@ wdquiz.module(
       get: (answerableQuestionId, onSuccess, onError) ->
         param = {
           answerableQuestionId: answerableQuestionId
+        }
+        base.get url, param, onSuccess, onError
+      getAll: (contestId, onSuccess, onError) ->
+        param = {
+          contestId: contestId
         }
         base.get url, param, onSuccess, onError
       getOne: (answerableQuestionId, entryId, onSuccess, onError) ->

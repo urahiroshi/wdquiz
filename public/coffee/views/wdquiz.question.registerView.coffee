@@ -13,12 +13,14 @@ wdquiz.question.registerView = Backbone.Marionette.ItemView.extend
     if(result._id)
       console.log 'find contest'
       @_contest = result
+      wdquiz.question.contest = result
       @_enableKeyPress = true
     else
       wdquiz.contestClient.create(
         (result) =>
           console.log 'create contest'
           @_contest = result
+          wdquiz.question.contest = result
           @_enableKeyPress = true
         () ->
           console.log 'error: contestClient.create'
