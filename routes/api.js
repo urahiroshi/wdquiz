@@ -12,18 +12,25 @@ var express = require('express'),
     onSuccessBaseGen,
     onWriteFinishedBaseGen,
     returnError,
+    isUpdated,
     onSuccessReturnDeepObj;
 
 // ---- private functions ----
 
-returnError = function(statusCode, log) {
+isUpdated = function(result, count) {
+  count = count || 1;
+  console.log("update result: " + JSON.stringify(result));
+  return (result === count) || (result.nModified === count);
+};
+
+returnError = function(res, statusCode, log) {
   console.log(log);
   res.status(statusCode).send();
 };
 
 onErrorBaseGen = function(res) {
   return function(err) {
-    returnError(500, err);
+    returnError(res, 500, err);
   };
 };
 
@@ -36,7 +43,7 @@ onSuccessBaseGen = function(res) {
 onWriteFinishedBaseGen = function(res) {
     return function(writeResult) {
     var result = {};
-    result.isSuccess = (writeResult.nModified === 1);
+    result.isSuccess = isUpdated(writeResult);
     res.json(result);
   }
 };
@@ -123,7 +130,7 @@ router.delete('/answerableQuestion/:id', function(req, res) {
   var id = req.params.id,
       getAnswerableQuestion, endAnswer;
   getAnswerableQuestion = function(writeResult) {
-    if(writeResult.result.nModified === 1) {
+    if(isUpdated(writeResult)) {
       return answerableQuestionModel.getOne(id);
     } else {
       throw new Error("answerableQuesion.finish writeError");
@@ -164,7 +171,7 @@ router.delete('/answerableQuestion/:id', function(req, res) {
   var checkSuccess = function() {
     var result = {isSuccess: true};
     for(var i=0; i<arguments.length; i++) {
-      if (arguments[i].nModified !== 1) {
+      if (isUpdated(arguments[i])) {
         result.isSuccess = false;
         return result;
       }
@@ -238,7 +245,7 @@ router.get('/entry/', function(req, res) {
     entryModel.get(contestId)
       .done(onSuccessBaseGen(res), onErrorBaseGen(res));
   } else {
-    returnError(400, 'argument error');
+    returnError(res, 400, 'argument error');
   }
 });
 
