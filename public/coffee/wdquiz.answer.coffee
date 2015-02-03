@@ -30,9 +30,9 @@ wdquiz.answer = do() ->
         model = new wdquiz.answer.waitContestModel
           message: 'クイズが開始するまで待機しています。'
         _showContainer new wdquiz.answer.waitContestView model: model
-      waitQuiz: (contest) ->
+      waitQuiz: (contest, message) ->
         model = new wdquiz.answer.waitQuizModel
-          message: '次の問題までお待ちください・・・'
+          message: message || '次の問題までお待ちください・・・'
           contest: contest
         _showContainer new wdquiz.answer.waitQuizView model: model
       waitResult: (contest, answerableQuestion) ->

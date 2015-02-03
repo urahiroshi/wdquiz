@@ -2,8 +2,8 @@ wdquiz.answer.waitResultView = Backbone.Marionette.ItemView.extend
   template: JST["wdquiz.answer.wait.jst"]
   _answerableQuestionId: ''
   _entryId: ''
-  _gotoNext: () ->
-    wdquiz.answer.goto.waitQuiz(@model.toJSON().contest)
+  _waitNextQuiz: (message) ->
+    wdquiz.answer.goto.waitQuiz(@model.toJSON().contest, message)
   _retryAfterWait: () ->
     setTimeout(
       () =>
@@ -20,12 +20,7 @@ wdquiz.answer.waitResultView = Backbone.Marionette.ItemView.extend
             text = '正解しました！'
           else
             text = '残念、不正解です。'
-          @model.set(message: text)
-          setTimeout(
-            () =>
-              @_gotoNext()
-            5000
-          )
+          @_waitNextQuiz(text)
         else
           @_retryAfterWait()
       () =>
