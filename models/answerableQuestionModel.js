@@ -68,13 +68,26 @@ model.create = function(contestId, question) {
           contestId: contestId,
           startDt: now,
           endDt: now.addSeconds(enabledQuestion.timeout),
-          isEnabled: true
+          isEnabled: false,
+          isFinished: false
         }
       );
     }
   };
   return model.getEnabledQuestion(contestId)
     .then(onGetEnabledQuestion);
+};
+
+model.enable = function(id) {
+  return client.update(
+    TABLE_NAME,
+    {
+      _id: id
+    },
+    {
+      isEnabled: true
+    }
+  );
 };
 
 model.finish = function(id) {
@@ -85,6 +98,7 @@ model.finish = function(id) {
     },
     {
       isEnabled: false,
+      isFinished: true,
       endDt: dt.now()
     }
   );

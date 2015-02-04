@@ -92,7 +92,7 @@ router.delete('/contest/:id', function(req, res) {
     .done(onWriteFinishedBaseGen(res), onErrorBaseGen(res));
 });
 
-// 設問開始
+// 設問取得
 router.post('/answerableQuestion/', function(req, res) {
   var contestId = req.body.contestId,
       getFinishedOrder,
@@ -108,6 +108,13 @@ router.post('/answerableQuestion/', function(req, res) {
     .then(questionModel.getNext)
     .then(createAnswerableQuestion)
     .done(onSuccessBaseGen(res), onErrorBaseGen(res));
+});
+
+// 設問開始
+router.put('/answerableQuestion/', function(req, res) {
+  var id = req.params.id;
+  answerableQuestionModel.enable(id)
+    .done(onWriteFinishedBaseGen(res), onErrorBaseGen(res));
 });
 
 // 設問要求
