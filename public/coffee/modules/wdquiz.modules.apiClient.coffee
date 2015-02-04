@@ -51,6 +51,8 @@ wdquiz.module(
         base.get url, {contestId: contestId}, onSuccess, onError
       create: (contestId, onSuccess, onError) ->
         base.post url, {contestId: contestId}, onSuccess, onError
+      enable: (id, onSuccess, onError) ->
+        base.put url + id, {}, onSuccess, onError
       delete: (id, onSuccess, onError) ->
         base.delete url + id, {}, onSuccess, onError
     }

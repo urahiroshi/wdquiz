@@ -111,7 +111,7 @@ router.post('/answerableQuestion/', function(req, res) {
 });
 
 // 設問開始
-router.put('/answerableQuestion/', function(req, res) {
+router.put('/answerableQuestion/:id', function(req, res) {
   var id = req.params.id;
   answerableQuestionModel.enable(id)
     .done(onWriteFinishedBaseGen(res), onErrorBaseGen(res));
