@@ -2,6 +2,7 @@
 設問画面に行く前の待機画面。
 設問情報を取得して問題番号を表示し、キー入力により設問画面に遷移する。
 すべての設問が終了した場合(createで空が返ってくる)、結果発表画面に遷移する。
+TODO: 再度この画面が呼び出されたら、新しいanswerableQuestionを作って、既存のデータは破棄する
 ###
 
 wdquiz.question.waitView = Marionette.ItemView.extend
@@ -11,11 +12,17 @@ wdquiz.question.waitView = Marionette.ItemView.extend
     if answerableQuestion._id
       @model.set(title: answerableQuestion.question.order + '問目')
       @pressKey = (keyCode) =>
-
-        wdquiz.question.goto.quiz(@_contest, answerableQuestion)
+        wdquiz.answerableQuestionClient.enable(
+          answerableQuestion._id
+          () =>
+            wdquiz.question.goto.quiz(@_contest, answerableQuestion)
+          () ->
+            console.log 'error: answerableQuestionClient.enable'
+        )
     else
       wdquiz.question.goto.ending()
   initialize: ->
+    @listenTo @model, 'change', @render
     @_contest = @model.toJSON().contest
     wdquiz.answerableQuestionClient.create(
       @_contest._id
