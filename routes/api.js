@@ -12,8 +12,7 @@ var express = require('express'),
     onSuccessBaseGen,
     onWriteFinishedBaseGen,
     returnError,
-    isUpdated,
-    onSuccessReturnDeepObj;
+    isUpdated;
 
 // ---- private functions ----
 
@@ -117,18 +116,17 @@ router.put('/answerableQuestion/:id', function(req, res) {
     .done(onWriteFinishedBaseGen(res), onErrorBaseGen(res));
 });
 
-// 設問要求
+// 設問要求(エントリーから)
 router.get('/answerableQuestion/', function(req, res) {
-  var contestId = req.query.contestId,
-      hideAnswer;
-  hideAnswer = function(answerableQuestion) {
-    if(answerableQuestion._id) {
-      answerableQuestion.question.correctNumber = -1;
-    }
-    return answerableQuestion;
-  };
+  var contestId = req.query.contestId;
   answerableQuestionModel.getEnabledQuestion(contestId)
-    .then(hideAnswer)
+    .done(onSuccessBaseGen(res), onErrorBaseGen(res));
+});
+
+// 設問確認(エントリーから)
+router.get('/answerableQuestion/:id', function(req, res) {
+  var id = req.params.id;
+  answerableQuestionModel.getOneWithoutAnswer(id)
     .done(onSuccessBaseGen(res), onErrorBaseGen(res));
 });
 

@@ -49,6 +49,8 @@ wdquiz.module(
     _.extend this, {
       get: (contestId, onSuccess, onError) ->
         base.get url, {contestId: contestId}, onSuccess, onError
+      check: (id, onSuccess, onError) ->
+        base.get url + id, {}, onSuccess, onError
       create: (contestId, onSuccess, onError) ->
         base.post url, {contestId: contestId}, onSuccess, onError
       enable: (id, onSuccess, onError) ->

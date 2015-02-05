@@ -3,7 +3,15 @@
 var client = require('./dbClient'),
     model = {},
     dt = require('./dtHandler'),
-    TABLE_NAME = 'answerableQuestion';
+    TABLE_NAME = 'answerableQuestion',
+    hideAnswer;
+
+hideAnswer = function(answerableQuestion) {
+  if(answerableQuestion._id) {
+    answerableQuestion.question.correctNumber = -1;
+  }
+  return answerableQuestion;
+};
 
 model.getOne = function(id) {
   return client.readOne(
@@ -33,14 +41,12 @@ model.getEnabledQuestion = function(contestId) {
       contestId: contestId,
       isEnabled: true
     }
-  );
+  ).then(hideAnswer);
 };
 
-model.isTimeout = function(id) {
+model.getOneWithoutAnswer = function(id) {
   return model.getOne(id)
-    .then(function(answerableQuestion) {
-      return (answerableQuestion.endDt < dt.now());
-    });
+    .then(hideAnswer);
 };
 
 /*
