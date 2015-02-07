@@ -2,9 +2,19 @@
 
 var client = require('./dbClient'),
     model = {},
-    TABLE_NAME = 'question';
+    TABLE_NAME = 'question',
+    sortChoices;
+
+sortChoices = function(record) {
+  if (record.choices) {
+    record.choices.sort(function (choice1, choice2) {
+      return (Number(choice1.number) > Number(choice2.number) ? 1 : -1);
+    });
+  }
+};
 
 model.create = function(record) {
+  sortChoices(record);
   return client.create(TABLE_NAME, record);
 };
 
@@ -58,6 +68,7 @@ model.getNext = function(beforeOrder) {
 };
 
 model.update = function(id, updateMap) {
+  sortChoices(updateMap);
   return client.update(
     TABLE_NAME,
     {
