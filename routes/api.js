@@ -23,13 +23,13 @@ isUpdated = function(result, count) {
 };
 
 returnError = function(res, statusCode, log) {
-  console.log(log);
+  console.dir(log);
   res.status(statusCode).send();
 };
 
 onErrorBaseGen = function(res) {
   return function(err) {
-    returnError(res, 500, err);
+    returnError(res, 400, err);
   };
 };
 

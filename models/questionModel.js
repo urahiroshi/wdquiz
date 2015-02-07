@@ -1,9 +1,11 @@
 'use strict';
 
 var client = require('./dbClient'),
+    q = require('Q'),
     model = {},
     TABLE_NAME = 'question',
-    sortChoices;
+    sortChoices,
+    isValidChoices;
 
 sortChoices = function(record) {
   if (record.choices) {
@@ -13,9 +15,27 @@ sortChoices = function(record) {
   }
 };
 
+isValidChoices = function(record) {
+  if (record.choices) {
+    for(var i = 0, len = record.choices.length; i < len ; i++) {
+      if (record.choices.every(function(choice) {
+            return (Number(choice.number) !== i + 1);
+          }))
+      {
+        return false;
+      }
+    }
+  }
+  return true;
+};
+
 model.create = function(record) {
-  sortChoices(record);
-  return client.create(TABLE_NAME, record);
+  if(isValidChoices(record)) {
+    sortChoices(record);
+    return client.create(TABLE_NAME, record);
+  } else {
+    return q.reject("選択肢の番号が不正です");
+  }
 };
 
 model.getOne = function(id) {
@@ -68,14 +88,18 @@ model.getNext = function(beforeOrder) {
 };
 
 model.update = function(id, updateMap) {
-  sortChoices(updateMap);
-  return client.update(
-    TABLE_NAME,
-    {
-      _id: id
-    },
-    updateMap
-  );
+  if (isValidChoices(updateMap)) {
+    sortChoices(updateMap);
+    return client.update(
+        TABLE_NAME,
+        {
+          _id: id
+        },
+        updateMap
+    );
+  } else {
+    return q.reject("選択肢の番号が不正です");
+  }
 };
 
 model.delete = function(id) {
