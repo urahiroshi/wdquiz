@@ -13,12 +13,21 @@ hideAnswer = function(answerableQuestion) {
   return answerableQuestion;
 };
 
-model.getOne = function(id) {
-  return client.readOne(
-    TABLE_NAME,
+model._getOne = function(query, byEntry) {
+  var answerableQuestion = client.readOne(TABLE_NAME, query);
+  if (byEntry) {
+    return answerableQuestion.then(hideAnswer);
+  } else {
+    return answerableQuestion;
+  }
+};
+
+model.getOne = function(id, byEntry) {
+  return this._getOne(
     {
       _id: id
-    }
+    },
+    byEntry
   );
 };
 
@@ -34,19 +43,14 @@ model.get = function(contestId) {
   );
 };
 
-model.getEnabledQuestion = function(contestId) {
-  return client.readOne(
-    TABLE_NAME,
+model.getEnabledQuestion = function(contestId, byEntry) {
+  return this._getOne(
     {
       contestId: contestId,
       isEnabled: true
-    }
-  ).then(hideAnswer);
-};
-
-model.getOneWithoutAnswer = function(id) {
-  return model.getOne(id)
-    .then(hideAnswer);
+    },
+    byEntry
+  );
 };
 
 /*
@@ -80,7 +84,7 @@ model.create = function(contestId, question) {
       );
     }
   };
-  return model.getEnabledQuestion(contestId)
+  return this.getEnabledQuestion(contestId, false)
     .then(onGetEnabledQuestion);
 };
 

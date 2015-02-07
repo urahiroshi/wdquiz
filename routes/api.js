@@ -119,14 +119,14 @@ router.put('/answerableQuestion/:id', function(req, res) {
 // 設問要求(エントリーから)
 router.get('/answerableQuestion/', function(req, res) {
   var contestId = req.query.contestId;
-  answerableQuestionModel.getEnabledQuestion(contestId)
+  answerableQuestionModel.getEnabledQuestion(contestId, true)
     .done(onSuccessBaseGen(res), onErrorBaseGen(res));
 });
 
 // 設問確認(エントリーから)
 router.get('/answerableQuestion/:id', function(req, res) {
   var id = req.params.id;
-  answerableQuestionModel.getOneWithoutAnswer(id)
+  answerableQuestionModel.getOne(id, true)
     .done(onSuccessBaseGen(res), onErrorBaseGen(res));
 });
 
@@ -136,7 +136,7 @@ router.delete('/answerableQuestion/:id', function(req, res) {
       getAnswerableQuestion, endAnswer;
   getAnswerableQuestion = function(writeResult) {
     if(isUpdated(writeResult)) {
-      return answerableQuestionModel.getOne(id);
+      return answerableQuestionModel.getOne(id, false);
     } else {
       throw new Error("answerableQuesion.finish writeError");
     }
@@ -273,7 +273,7 @@ router.post('/answer/', function(req, res) {
       return {};
     }
   };
-  answerableQuestionModel.getOne(answerableQuestionId)
+  answerableQuestionModel.getOne(answerableQuestionId, false)
     .then(createAnswer)
     .done(onSuccessBaseGen(res), onErrorBaseGen(res));
 });
