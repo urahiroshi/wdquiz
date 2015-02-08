@@ -7,7 +7,6 @@ TODO: 再度この画面が呼び出されたら、新しいanswerableQuestion�
 
 wdquiz.question.waitView = Marionette.ItemView.extend
   template: JST["wdquiz.question.wait.jst"]
-  _contest: {}
   _onSuccessCreateAnswerableQuestion: (answerableQuestion) ->
     if answerableQuestion._id
       @model.set(title: answerableQuestion.question.order + '問目')
@@ -15,7 +14,7 @@ wdquiz.question.waitView = Marionette.ItemView.extend
         wdquiz.answerableQuestionClient.enable(
           answerableQuestion._id
           () =>
-            wdquiz.question.goto.quiz(@_contest, answerableQuestion)
+            wdquiz.question.goto.quiz(answerableQuestion)
           () ->
             console.log 'error: answerableQuestionClient.enable'
         )
@@ -23,9 +22,8 @@ wdquiz.question.waitView = Marionette.ItemView.extend
       wdquiz.question.goto.ending()
   initialize: ->
     @listenTo @model, 'change', @render
-    @_contest = @model.toJSON().contest
     wdquiz.answerableQuestionClient.create(
-      @_contest._id
+      wdquiz.question.contest._id
       (result) =>
         @_onSuccessCreateAnswerableQuestion(result)
       () ->

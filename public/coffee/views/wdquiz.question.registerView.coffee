@@ -8,18 +8,15 @@
 wdquiz.question.registerView = Backbone.Marionette.ItemView.extend
   template: JST["wdquiz.question.register.jst"]
   _enableKeyPress: false
-  _contest: {}
   _onSuccessGetNotFinished: (result) ->
     if(result._id)
       console.log 'find contest'
-      @_contest = result
       wdquiz.question.contest = result
       @_enableKeyPress = true
     else
       wdquiz.contestClient.create(
         (result) =>
           console.log 'create contest'
-          @_contest = result
           wdquiz.question.contest = result
           @_enableKeyPress = true
         () ->
@@ -27,7 +24,7 @@ wdquiz.question.registerView = Backbone.Marionette.ItemView.extend
       )
   pressKey: (keyCode) ->
     if(@_enableKeyPress)
-      wdquiz.question.goto.wait @_contest
+      wdquiz.question.goto.wait()
   onShow: ->
     wdquiz.contestClient.getNotFinished(
       _.bind @_onSuccessGetNotFinished, @

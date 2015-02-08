@@ -1,18 +1,15 @@
 wdquiz.question.quizModel = Backbone.Model.extend
   defaults: 
-    contest: {}
     answerableQuestion: {}
     answerCount: []
     _timer: ''
     
 wdquiz.question.waitModel = Backbone.Model.extend
   defaults: 
-    contest: {}
     title: ''
 
 wdquiz.question.resultModel = Backbone.Model.extend
   defaults:
-    contest: {}
     answerableQuestion: {}
     validEntries: []
 

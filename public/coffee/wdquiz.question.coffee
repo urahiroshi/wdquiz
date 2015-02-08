@@ -20,18 +20,15 @@ wdquiz.question = do() ->
     goto:
       register: -> 
         _showContainer new wdquiz.question.registerView()
-      quiz: (contest, answerableQuestion) ->
+      quiz: (answerableQuestion) ->
         model = new wdquiz.question.quizModel
-          contest: contest
           answerableQuestion: answerableQuestion
         _showContainer new wdquiz.question.quizView model: model
-      wait: (contest) ->
-        model = new wdquiz.question.waitModel
-          contest: contest
+      wait: () ->
+        model = new wdquiz.question.waitModel()
         _showContainer new wdquiz.question.waitView model: model
-      result: (contest, answerableQuestion) ->
+      result: (answerableQuestion) ->
         model = new wdquiz.question.resultModel
-          contest: contest
           answerableQuestion: answerableQuestion
         _showContainer new wdquiz.question.resultView model: model
       ending: () ->
