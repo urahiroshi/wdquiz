@@ -17,23 +17,16 @@ wdquiz.question.quizView = Backbone.Marionette.ItemView.extend
       if keyCode == targetKey
         callback()
 
-  _finishQuestion: ->
-    wdquiz.answerableQuestionClient.delete(
-      @_answerableQuestion._id
-      (result) =>
-        # TODO: result画面に移るケースも追加。
-        wdquiz.question.goto.wait @model.get('contest')
-      () ->
-        console.log 'error: answerableQuestionClient.delete'
-    )
+  _gotoNext: ->
+    wdquiz.question.goto.wait @model.get('contest')
 
   _viewCorrectAnswer: ->
     # 正解を表示する
     correctNumber = @_answerableQuestion.question.correctNumber
     $answerContainer = $("#answer_" + correctNumber)
     $answerContainer.css("background-color", "yellow")
-    console.log("finishQuestion by keypress")
-    @_onPressKey(() => @_finishQuestion())
+    console.log("gotoNext by keypress")
+    @_onPressKey(() => @_gotoNext())
 
   _viewAnswerCount: ->
     # 各番号の回答数を表示する
@@ -51,6 +44,16 @@ wdquiz.question.quizView = Backbone.Marionette.ItemView.extend
         @_viewAnswerCount()
     )
 
+  _finishQuestion: () ->
+    wdquiz.answerableQuestionClient.delete(
+      @_answerableQuestion._id
+      (result) =>
+        console.log("viewAnswerCount by keypress")
+        @_onPressKey(() => @_viewAnswerCount())
+      () ->
+        console.log("error: answerableQuestionClient.delete")
+    )
+
   _countDown: ->
     @_timer = @_timer - 1
     @model.set(_timer: String(@_timer))
@@ -60,8 +63,7 @@ wdquiz.question.quizView = Backbone.Marionette.ItemView.extend
         1000
       )
     else
-      console.log("viewAnswerCount by keypress")
-      @_onPressKey(() => @_viewAnswerCount())
+      @_finishQuestion()
 
   initialize: ->
     @listenTo @model, 'change', @render
