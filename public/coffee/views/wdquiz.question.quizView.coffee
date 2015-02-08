@@ -33,7 +33,8 @@ wdquiz.question.quizView = Backbone.Marionette.ItemView.extend
     wdquiz.answerClient.get(
       @_answerableQuestion._id
       (answers) =>
-        answerCount = _.map(@_answerableQuestion.question.choices, () -> 0)
+        choiceLength = @_answerableQuestion.question.choices.length
+        answerCount = (0 for dummy in [1..choiceLength])
         for answer in answers
           answerCount[answer.answerNumber] += 1
         @model.set(answerCount: answerCount)
