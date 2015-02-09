@@ -43,6 +43,16 @@ model.get = function(contestId) {
   );
 };
 
+model.getUnfinishedQuestion = function(contestId) {
+  return this._getOne(
+    {
+      contestId: contestId,
+      isFinished: false
+    },
+    false
+  );
+};
+
 model.getEnabledQuestion = function(contestId, byEntry) {
   return this._getOne(
     {

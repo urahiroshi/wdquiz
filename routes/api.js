@@ -7,14 +7,29 @@ var express = require('express'),
     contestModel = require('../models/contestModel'),
     entryModel = require('../models/entryModel'),
     questionModel = require('../models/questionModel'),
+    sessionModel = require('../models/sessionModel'),
     router = express.Router(),
     onErrorBaseGen,
     onSuccessBaseGen,
     onWriteFinishedBaseGen,
     returnError,
-    isUpdated;
+    isUpdated,
+    needQuestionPermission;
 
 // ---- private functions ----
+
+needQuestionPermission = function(req, res, next) {
+  var onGetPermission;
+  onGetPermission = function(hasPermission) {
+    if (hasPermission) {
+      next();
+    } else {
+      returnError(res, 403, '認証エラー(Question)');
+    }
+  };
+  sessionModel.hasPermission(req.cookies, sessionModel.PERMISSION.QUESTION)
+    .then(onGetPermission)
+};
 
 isUpdated = function(result, count) {
   count = count || 1;
@@ -56,14 +71,14 @@ router.get('/contest/', function(req, res) {
 });
 
 // コンテスト開始
-router.post('/contest/', function(req, res) {
+router.post('/contest/', needQuestionPermission, function(req, res) {
   // 一旦createのresultをそのまま返す
   contestModel.create()
     .done(onSuccessBaseGen(res), onErrorBaseGen(res));
 });
 
 // コンテスト集計
-router.get('/contest/:contestId/result', function(req, res) {
+router.get('/contest/:contestId/result', needQuestionPermission, function(req, res) {
   var contestId = req.params.contestId,
       getAnswers, getEntryScores;
   getAnswers = function(contestId) {
@@ -86,13 +101,13 @@ router.get('/contest/:contestId/result', function(req, res) {
 });
 
 // コンテスト終了
-router.delete('/contest/:id', function(req, res) {
+router.delete('/contest/:id', needQuestionPermission, function(req, res) {
   contestModel.finish(req.params.id)
     .done(onWriteFinishedBaseGen(res), onErrorBaseGen(res));
 });
 
 // 設問取得
-router.post('/answerableQuestion/', function(req, res) {
+router.post('/answerableQuestion/', needQuestionPermission, function(req, res) {
   var contestId = req.body.contestId,
       getFinishedOrder,
       createAnswerableQuestion;
@@ -110,17 +125,29 @@ router.post('/answerableQuestion/', function(req, res) {
 });
 
 // 設問開始
-router.put('/answerableQuestion/:id', function(req, res) {
+router.put('/answerableQuestion/:id', needQuestionPermission, function(req, res) {
   var id = req.params.id;
   answerableQuestionModel.enable(id)
     .done(onWriteFinishedBaseGen(res), onErrorBaseGen(res));
 });
 
 // 設問要求(エントリーから)
+// QUESTION画面の要求であれば"未完了の"設問情報を返し、
+// そうでない場合は"回答可能の"設問情報を返す。
 router.get('/answerableQuestion/', function(req, res) {
-  var contestId = req.query.contestId;
-  answerableQuestionModel.getEnabledQuestion(contestId, true)
-    .done(onSuccessBaseGen(res), onErrorBaseGen(res));
+  var contestId = req.query.contestId,
+      getQuestion;
+  getQuestion = function(hasPermission) {
+    if (hasPermission) {
+      answerableQuestionModel.getUnfinishedQuestion(contestId)
+        .done(onSuccessBaseGen(res), onErrorBaseGen(res));
+    } else {
+      answerableQuestionModel.getEnabledQuestion(contestId, true)
+        .done(onSuccessBaseGen(res), onErrorBaseGen(res));
+    }
+  };
+  sessionModel.hasPermission(req.cookies, sessionModel.PERMISSION.QUESTION)
+    .then(getQuestion);
 });
 
 // 設問確認(エントリーから)
@@ -131,7 +158,7 @@ router.get('/answerableQuestion/:id', function(req, res) {
 });
 
 // 設問終了
-router.delete('/answerableQuestion/:id', function(req, res) {
+router.delete('/answerableQuestion/:id', needQuestionPermission, function(req, res) {
   var id = req.params.id,
       getAnswerableQuestion, endAnswer;
   getAnswerableQuestion = function(writeResult) {
