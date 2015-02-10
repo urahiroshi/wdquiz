@@ -11,7 +11,7 @@ wdquiz.answer.waitQuizView = Backbone.Marionette.ItemView.extend
     wdquiz.answerableQuestionClient.get(
       contest._id
       (result) =>
-        if result.isEnabled && !result.isFinished
+        if result.isVisible && !result.isFinished
           console.log("goto quiz: " + result._id)
           wdquiz.answer.goto.answer(contest, result)
         else

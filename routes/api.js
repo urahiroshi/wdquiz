@@ -107,6 +107,7 @@ router.delete('/contest/:id', needQuestionPermission, function(req, res) {
 });
 
 // 設問取得
+// ほかの設問がすべて完了している状態であれば
 router.post('/answerableQuestion/', needQuestionPermission, function(req, res) {
   var contestId = req.body.contestId,
       getFinishedOrder,
@@ -127,27 +128,26 @@ router.post('/answerableQuestion/', needQuestionPermission, function(req, res) {
 // 設問開始
 router.put('/answerableQuestion/:id', needQuestionPermission, function(req, res) {
   var id = req.params.id;
-  answerableQuestionModel.enable(id)
+  answerableQuestionModel.changeVisible(id, true)
     .done(onWriteFinishedBaseGen(res), onErrorBaseGen(res));
 });
 
-// 設問要求(エントリーから)
-// QUESTION画面の要求であれば"未完了の"設問情報を返し、
-// そうでない場合は"回答可能の"設問情報を返す。
+// 設問要求
+// 閲覧可能な情報を返す
 router.get('/answerableQuestion/', function(req, res) {
   var contestId = req.query.contestId,
-      getQuestion;
-  getQuestion = function(hasPermission) {
+      getVisibleQuestion;
+  getVisibleQuestion = function(hasPermission) {
     if (hasPermission) {
-      answerableQuestionModel.getUnfinishedQuestion(contestId)
+      answerableQuestionModel.getVisibleQuestion(contestId, false)
         .done(onSuccessBaseGen(res), onErrorBaseGen(res));
     } else {
-      answerableQuestionModel.getEnabledQuestion(contestId, true)
+      answerableQuestionModel.getVisibleQuestion(contestId, true)
         .done(onSuccessBaseGen(res), onErrorBaseGen(res));
     }
   };
   sessionModel.hasPermission(req.cookies, sessionModel.PERMISSION.QUESTION)
-    .then(getQuestion);
+    .then(getVisibleQuestion);
 });
 
 // 設問確認(エントリーから)

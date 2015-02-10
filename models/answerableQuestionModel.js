@@ -53,11 +53,11 @@ model.getUnfinishedQuestion = function(contestId) {
   );
 };
 
-model.getEnabledQuestion = function(contestId, byEntry) {
+model.getVisibleQuestion = function(contestId, byEntry) {
   return this._getOne(
     {
       contestId: contestId,
-      isEnabled: true
+      isVisible: true
     },
     byEntry
   );
@@ -88,7 +88,7 @@ model.create = function(contestId, question) {
           contestId: contestId,
           startDt: now,
           endDt: now.addSeconds(enabledQuestion.timeout),
-          isEnabled: false,
+          isVisible: false,
           isFinished: false
         }
       );
@@ -98,14 +98,14 @@ model.create = function(contestId, question) {
     .then(onGetEnabledQuestion);
 };
 
-model.enable = function(id) {
+model.changeVisible = function(id, visible) {
   return client.update(
     TABLE_NAME,
     {
       _id: id
     },
     {
-      isEnabled: true
+      isVisible: visible
     }
   );
 };
@@ -117,7 +117,6 @@ model.finish = function(id) {
       _id: id
     },
     {
-      isEnabled: false,
       isFinished: true,
       endDt: dt.now()
     }
