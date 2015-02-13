@@ -26,7 +26,17 @@ wdquiz.question.quizView = Backbone.Marionette.ItemView.extend
     $answerContainer = $("#answer_" + correctNumber)
     $answerContainer.css("background-color", "yellow")
     console.log("gotoNext by keypress")
-    @_onPressKey(() => @_gotoNext())
+    @_onPressKey(
+      () =>
+        wdquiz.answerableQuestionClient.changeVisible(
+          @_answerableQuestion._id
+          false
+          () =>
+            @_gotoNext()
+          () ->
+            console.log 'answerableQuestionの無効化に失敗しました。'
+        )
+    )
 
   _viewAnswerCount: ->
     # 各番号の回答数を表示する
@@ -34,7 +44,7 @@ wdquiz.question.quizView = Backbone.Marionette.ItemView.extend
       @_answerableQuestion._id
       (answers) =>
         choiceLength = @_answerableQuestion.question.choices.length
-        answerCount = (0 for dummy in [1..choiceLength])
+        answerCount = (0 for dummy in [0..choiceLength])
         for answer in answers
           answerCount[answer.answerNumber] += 1
         @model.set(answerCount: answerCount)

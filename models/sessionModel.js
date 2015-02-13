@@ -16,7 +16,7 @@ model.SESSIONID = 'sessionId';
 
 model._createSession = function(permission) {
   var startDt = dt.now(),
-      endDt = dt.getDate(startDt, 1),
+      endDt = dt.addDays(startDt, 1),
       sessionId = uuid.v4(),
       onGetSession;
   onGetSession = function(session) {

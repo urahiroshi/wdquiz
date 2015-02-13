@@ -18,7 +18,7 @@ model.create = function(entryId, answerableQuestionId, answerNumber, contestId, 
   );
 };
 
-model.get = function(query) {
+model._get = function(query) {
   return client.read(
     TABLE_NAME,
     {
@@ -27,6 +27,14 @@ model.get = function(query) {
     }
   );
 };
+
+model.getAll = function(contestId) {
+  return model._get({contestId: contestId});
+}
+
+model.get = function(answerableQuestionId) {
+  return model._get({answerableQuestionId: answerableQuestionId});
+}
 
 model.getOne = function(answerableQuestionId, entryId) {
   return client.readOne(
@@ -46,6 +54,15 @@ model.update = function(id, answerPoint) {
     },
     {
       answerPoint: answerPoint
+    }
+  );
+};
+
+model.delete = function(answerableQuestionId) {
+  return client.delete(
+    TABLE_NAME,
+    {
+      answerableQuestionId: answerableQuestionId
     }
   );
 };

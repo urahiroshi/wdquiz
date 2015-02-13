@@ -82,7 +82,7 @@ router.get('/contest/:contestId/result', needQuestionPermission, function(req, r
   var contestId = req.params.contestId,
       getAnswers, getEntryScores;
   getAnswers = function(contestId) {
-    return answerModel.get({ contestId: contestId });
+    return answerModel.getAll(contestId);
   };
   getEntryScores = function(answers) {
     var entryScores = {};
@@ -107,7 +107,7 @@ router.delete('/contest/:id', needQuestionPermission, function(req, res) {
 });
 
 // 設問取得
-// ほかの設問がすべて完了している状態であれば
+// 未完了の設問が残っていた場合、それを破棄して新規作成する
 router.post('/answerableQuestion/', needQuestionPermission, function(req, res) {
   var contestId = req.body.contestId,
       getFinishedOrder,
@@ -127,8 +127,9 @@ router.post('/answerableQuestion/', needQuestionPermission, function(req, res) {
 
 // 設問開始
 router.put('/answerableQuestion/:id', needQuestionPermission, function(req, res) {
-  var id = req.params.id;
-  answerableQuestionModel.changeVisible(id, true)
+  var id = req.params.id,
+       isVisible = req.body.isVisible;
+  answerableQuestionModel.changeVisible(id, isVisible)
     .done(onWriteFinishedBaseGen(res), onErrorBaseGen(res));
 });
 
@@ -179,12 +180,13 @@ router.delete('/answerableQuestion/:id', needQuestionPermission, function(req, r
       return contestModel.finishOrder(contestId, order);
     };
     getAnswers = function() {
-      return answerModel.get({answerableQuestionId: id});
+      return answerModel.get(id);
     };
     updateAnswers = function(answers) {
       var correctNumber = answerableQuestion.question.correctNumber,
           updateFunctions;
       updateFunctions = answers.map(function(answer) {
+        console.log("*****" + answer._id);
         var answerPoint;
         if (correctNumber === answer.answerNumber) {
           answerPoint = 1;
@@ -310,19 +312,20 @@ router.get('/answer/', function(req, res) {
   var answerableQuestionId = req.query.answerableQuestionId,
       entryId = req.query.entryId,
       contestId = req.query.contestId,
-      query;
+      query,
+      getAnswerPromise;
   if (entryId) {
     answerModel.getOne(answerableQuestionId, entryId)
       .done(onSuccessBaseGen(res), onErrorBaseGen(res));
   } else {
     // TODO: Answerユーザーからはアクセスできないように。。
     if (answerableQuestionId) {
-      query = {answerableQuestionId: answerableQuestionId};
+      getAnswerPromise = answerModel.get(answerableQuestionId);
     } else if (contestId) {
-      query = {contestId: contestId};
+      getAnswerPromise = answerModel.getAll(contestId);
     }
-    if (query) {
-      answerModel.get(query)
+    if (getAnswerPromise) {
+      getAnswerPromise
         .done(onSuccessBaseGen(res), onErrorBaseGen(res));
     } else {
       onErrorBaseGen(res)("invalid arguments");

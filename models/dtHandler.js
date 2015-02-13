@@ -11,9 +11,19 @@ handler.toStr = function(dt) {
   return dt.toFormat('YYYY/MM/DD HH24:MI:SS');
 };
 
-handler.getDate = function(originDate, addDay) {
-  var result = new Date(originDate.getTime());
-  result.setDate(result.getDate + addDay);
+handler._Clone = function(originDate) {
+  return new Date(originDate.getTime());
+};
+
+handler.addDays = function(originDate, days) {
+  var result = handler._Clone(originDate);
+  result.addDays(days);
+  return result;
+};
+
+handler.addSeconds = function(originDate, seconds) {
+  var result = handler._Clone(originDate);
+  result.addSeconds(seconds);
   return result;
 };
 

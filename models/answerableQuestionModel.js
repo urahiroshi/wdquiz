@@ -1,8 +1,10 @@
 'use strict';
 
 var client = require('./dbClient'),
-    model = {},
     dt = require('./dtHandler'),
+    answerModel = require('./answerModel'),
+    Q = require('q'),
+    model = {},
     TABLE_NAME = 'answerableQuestion',
     hideAnswer;
 
@@ -67,47 +69,63 @@ model.getVisibleQuestion = function(contestId, byEntry) {
  * 設問を開始時に使用される。
  * 他に有効なanswerableQuestionがないか確認し、
  * なければ引数のquestionに対応するanswerableQuestionを作成して返し、
- * 他に有効なanswerableQuestionがあればその値を返す。
- * questionが空で要求された場合は空を返す(次の設問がない場合を想定)
+ * 他に有効なanswerableQuestionがあればそれを削除して新規作成する。
+ * questionが空で要求された場合(次の設問がない場合)は空を返す
  */
 model.create = function(contestId, question) {
-  var onGetEnabledQuestion;
+  var onGetUnfinishedQuestion, create;
   if(!question._id) {
     return {};
   }
-  onGetEnabledQuestion = function(enabledQuestion) {
-    var now = dt.now();
-    if(enabledQuestion._id) {
-      console.log('他に有効なanswerableQuestionが存在します');
-      return enabledQuestion;
+  onGetUnfinishedQuestion = function(enabledQuestion) {
+    if (enabledQuestion._id) {
+      console.log('他に有効なanswerableQuestionが存在するため、削除します');
+      return model.delete(enabledQuestion._id);
     } else {
-      return client.create(
-        TABLE_NAME,
-        {
-          question: question,
-          contestId: contestId,
-          startDt: now,
-          endDt: now.addSeconds(enabledQuestion.timeout),
-          isVisible: false,
-          isFinished: false
-        }
-      );
+      return null;
     }
   };
-  return this.getEnabledQuestion(contestId, false)
-    .then(onGetEnabledQuestion);
+  create = function(deleteResult) {
+    if (deleteResult) {
+      if ((deleteResult !== 1) && (deleteResult.nModified !== 1)) {
+        return Q.reject('既存のanswerableQuestionの削除に失敗しました。');
+      }
+    }
+    return client.create(
+      TABLE_NAME,
+      {
+        question: question,
+        contestId: contestId,
+        isVisible: false,
+        isFinished: false
+      }
+    );
+  };
+
+  return this.getUnfinishedQuestion(contestId, false)
+    .then(onGetUnfinishedQuestion)
+    .then(create);
 };
 
 model.changeVisible = function(id, visible) {
-  return client.update(
-    TABLE_NAME,
-    {
-      _id: id
-    },
-    {
-      isVisible: visible
+  var updateMap = { isVisible: visible},
+      now = dt.now(),
+      updateClient;
+  updateClient = function(answerableQuestion) {
+    if (visible) {
+      updateMap.startDt = now;
+      updateMap.endDt = dt.addSeconds(now, answerableQuestion.question.timeout);
     }
-  );
+    return client.update(
+        TABLE_NAME,
+        {
+          _id: id
+        },
+        updateMap
+    );
+  };
+  return model.getOne(id, false)
+    .then(updateClient);
 };
 
 model.finish = function(id) {
@@ -121,6 +139,33 @@ model.finish = function(id) {
       endDt: dt.now()
     }
   );
+};
+
+model.delete = function(id) {
+  var deleteAnswers, deleteAnswerableQuestion,
+      answersCount = 0;
+  deleteAnswers = function(answers) {
+    if (answers.length > 0) {
+      answersCount = answers.length;
+      return answerModel.delete(id);
+    } else {
+      return 0;
+    }
+  };
+  deleteAnswerableQuestion = function(deleteResult) {
+    if ((deleteResult !== answersCount) && (deleteResult.nModified !== answersCount)) {
+      return Q.reject('answerの削除に失敗しました。');
+    }
+    return client.delete(
+      TABLE_NAME,
+      {
+        _id: id
+      }
+    );
+  };
+  return answerModel.get(id)
+    .then(deleteAnswers)
+    .then(deleteAnswerableQuestion);
 };
 
 module.exports = model;

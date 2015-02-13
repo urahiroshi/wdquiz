@@ -53,8 +53,8 @@ wdquiz.module(
         base.get url + id, {}, onSuccess, onError
       create: (contestId, onSuccess, onError) ->
         base.post url, {contestId: contestId}, onSuccess, onError
-      enable: (id, onSuccess, onError) ->
-        base.put url + id, {}, onSuccess, onError
+      changeVisible: (id, isVisible, onSuccess, onError) ->
+        base.put url + id, {isVisible: isVisible}, onSuccess, onError
       delete: (id, onSuccess, onError) ->
         base.delete url + id, {}, onSuccess, onError
     }
