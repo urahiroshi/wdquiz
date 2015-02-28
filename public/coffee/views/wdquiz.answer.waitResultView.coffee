@@ -16,11 +16,7 @@ wdquiz.answer.waitResultView = Backbone.Marionette.ItemView.extend
       @_entryId
       (result) =>
         if (result.answerPoint != undefined)
-          if (result.answerPoint > 0)
-            text = '正解しました！'
-          else
-            text = '残念、不正解です。'
-          @_waitNextQuiz(text)
+          @_waitNextQuiz(@model.toJSON().message)
         else
           @_retryAfterWait()
       () =>

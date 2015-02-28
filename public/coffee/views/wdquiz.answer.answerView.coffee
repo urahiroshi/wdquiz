@@ -19,6 +19,7 @@ wdquiz.answer.answerView = Backbone.Marionette.ItemView.extend
         wdquiz.answer.goto.waitResult(
           @model.toJSON().contest
           @model.toJSON().answerableQuestion
+          String(number) + '番を選択しました。'
         )
       () =>
         setTimeout(

@@ -35,9 +35,9 @@ wdquiz.answer = do() ->
           message: message || '次の問題までお待ちください・・・'
           contest: contest
         _showContainer new wdquiz.answer.waitQuizView model: model
-      waitResult: (contest, answerableQuestion) ->
+      waitResult: (contest, answerableQuestion, message) ->
         model = new wdquiz.answer.waitResultModel
-          message: '回答を送信しました。'
+          message: message || '回答を送信しました。'
           contest: contest
           answerableQuestion: answerableQuestion
         _showContainer new wdquiz.answer.waitResultView model: model
