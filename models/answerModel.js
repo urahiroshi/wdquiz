@@ -6,16 +6,26 @@ var client = require('./dbClient'),
     TABLE_NAME = 'answer';
 
 model.create = function(entryId, answerableQuestionId, answerNumber, contestId, startDt) {
-  return client.create(
-    TABLE_NAME,
-    {
-      entryId: entryId,
-      answerableQuestionId: answerableQuestionId,
-      answerNumber: answerNumber,
-      contestId: contestId,
-      answerTime: dt.now() - startDt
+  var onGetAnswer, answerTime;
+  answerTime = dt.now() - startDt;
+  onGetAnswer = function(answer) {
+    if (answer._id) {
+      return {};
+    } else {
+      return client.create(
+        TABLE_NAME,
+        {
+          entryId: entryId,
+          answerableQuestionId: answerableQuestionId,
+          answerNumber: answerNumber,
+          contestId: contestId,
+          answerTime: answerTime
+        }
+      );
     }
-  );
+  };
+  return model.getOne(answerableQuestionId, entryId)
+    .then(onGetAnswer);
 };
 
 model._get = function(query) {
