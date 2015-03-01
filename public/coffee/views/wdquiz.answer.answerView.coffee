@@ -34,7 +34,11 @@ wdquiz.answer.answerView = Backbone.Marionette.ItemView.extend
         wdquiz.answerableQuestionClient.check(
           @_answerableQuestionId
           (answerableQuestion) =>
-            if (answerableQuestion.isFinished)
+            if (!answerableQuestion.isVisible)
+              clearInterval(@_answerFinishedChecker)
+              console.log "question deleted !!"
+              wdquiz.answer.goto.waitQuiz(@_contest)
+            else if (answerableQuestion.isFinished)
               clearInterval(@_answerFinishedChecker)
               console.log "question finished !!"
               wdquiz.answer.goto.waitQuiz(@_contest)

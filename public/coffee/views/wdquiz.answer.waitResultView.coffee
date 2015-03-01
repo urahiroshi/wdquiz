@@ -15,7 +15,10 @@ wdquiz.answer.waitResultView = Backbone.Marionette.ItemView.extend
       @_answerableQuestionId
       @_entryId
       (result) =>
-        if (result.answerPoint != undefined)
+        if (!result._id)
+          # 設問が破棄された場合
+          @_waitNextQuiz(@model.toJSON().message)
+        else if (result.answerPoint != undefined)
           @_waitNextQuiz(@model.toJSON().message)
         else
           @_retryAfterWait()
