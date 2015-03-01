@@ -4,6 +4,7 @@ var client = require('./dbClient'),
     dt = require('./dtHandler'),
     answerModel = require('./answerModel'),
     Q = require('q'),
+    ObjectID = require('mongodb').ObjectID,
     model = {},
     TABLE_NAME = 'answerableQuestion',
     hideAnswer;
@@ -143,16 +144,18 @@ model.finish = function(id) {
 
 model.delete = function(id) {
   var deleteAnswers, deleteAnswerableQuestion,
-      answersCount = 0;
+      answersCount = 0,
+      idStr = String(id);
   deleteAnswers = function(answers) {
     if (answers.length > 0) {
       answersCount = answers.length;
-      return answerModel.delete(id);
+      return answerModel.delete(idStr);
     } else {
       return 0;
     }
   };
   deleteAnswerableQuestion = function(deleteResult) {
+    console.log(String(answersCount) + '個のanswerを削除します。');
     if ((deleteResult !== answersCount) && (deleteResult.nModified !== answersCount)) {
       return Q.reject('answerの削除に失敗しました。');
     }
@@ -163,7 +166,7 @@ model.delete = function(id) {
       }
     );
   };
-  return answerModel.get(id)
+  return answerModel.get(idStr)
     .then(deleteAnswers)
     .then(deleteAnswerableQuestion);
 };
