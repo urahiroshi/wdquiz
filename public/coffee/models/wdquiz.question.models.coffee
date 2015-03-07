@@ -1,3 +1,7 @@
+wdquiz.question.registerModel = Backbone.Model.extend
+  defaults:
+    entries: []
+
 wdquiz.question.quizModel = Backbone.Model.extend
   defaults: 
     answerableQuestion: {}

@@ -18,8 +18,9 @@ wdquiz.question = do() ->
 
   question = {
     goto:
-      register: -> 
-        _showContainer new wdquiz.question.registerView()
+      register: ->
+        model = new wdquiz.question.registerModel()
+        _showContainer new wdquiz.question.registerView model: model
       quiz: (answerableQuestion) ->
         model = new wdquiz.question.quizModel
           answerableQuestion: answerableQuestion

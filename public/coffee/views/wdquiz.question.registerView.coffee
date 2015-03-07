@@ -8,24 +8,43 @@
 wdquiz.question.registerView = Backbone.Marionette.ItemView.extend
   template: JST["wdquiz.question.register.jst"]
   _enableKeyPress: false
+  _viewEntriesInterval: null
   _onSuccessGetNotFinished: (result) ->
     if(result._id)
       console.log 'find contest'
       wdquiz.question.contest = result
+      @_setViewEntriesInterval(result._id)
       @_enableKeyPress = true
     else
       wdquiz.contestClient.create(
         (result) =>
           console.log 'create contest'
           wdquiz.question.contest = result
+          @_setViewEntriesInterval(result._id)
           @_enableKeyPress = true
         () ->
           console.log 'error: contestClient.create'
       )
+  _setViewEntriesInterval: (contestId) ->
+    @_viewEntriesInterval = setInterval(
+      () =>
+        @_viewEntries(contestId)
+      500
+    )
+  _viewEntries: (contestId) ->
+    wdquiz.entryClient.get(
+      contestId
+      (result) =>
+        @model.set(entries: result)
+      () ->
+        console.log 'error: entryClient.get'
+    )
   pressKey: (keyCode) ->
     if(@_enableKeyPress)
+      clearInterval(@_viewEntriesInterval)
       wdquiz.question.goto.wait()
-  onShow: ->
+  initialize: ->
+    @listenTo @model, 'change', @render
     wdquiz.contestClient.getNotFinished(
       _.bind @_onSuccessGetNotFinished, @
       () ->
