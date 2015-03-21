@@ -1,22 +1,22 @@
-<div>it is base Layout Template !!
+<div id="quiz">
   <div id="timer"><%= _timer %></div>
   <div id="question"><%= answerableQuestion.question.text %></div>
-  <div id="choices">
-    <table>
+  <div>
+    <table id="choices">
       <% var choices = answerableQuestion.question.choices; %>
       <% var columnCount = Math.ceil(choices.length / 2); %>
       <% _.each(choices, function(choice) { %>
-        <% if (choice.number % columnCount === 0) { %>
+        <% if ((choice.number - 1) % columnCount === 0) { %>
         <tr>
         <% } %>
-          <td id="answer_<%= choice.number %>">
-            <div>
+          <td id="answer_<%= choice.number %>" class="choice">
+            <div class="choice-number">
               <%= choice.number %>
             </div>
-            <div>
+            <div class="choice-content">
               <%= choice.label %>
             </div>
-            <div>
+            <div class="choice-answers">
               <%= answerCount[choice.number] %>
             </div>
           </td>

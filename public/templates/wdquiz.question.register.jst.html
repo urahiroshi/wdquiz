@@ -1,14 +1,22 @@
-<div>
-  <div>クイズ！</div>
-  <% if (entries.length > 0) { %>
-  <div>参加グループ</div>
-  <% } else { %>
-  <div>登録してください。</div>
-  <% } %>
+<div id="register">
+  <div id="register-title">
+    ** Wedding Quiz **
+  </div>
+  <div class="entries">
+    <div id="entries-title">
+      <% if (entries.length > 0) { %>
+      参加グループ
+      <% } else { %>
+      登録してください。
+      <% } %>
+    </div>
 
-  <% _.each(entries, function(entry) { %>
-  <ul>
-    <li><%= entry.name %></li>
-  </ul>
-  <% }); %>
+    <div id="entries-list">
+    <% _.each(entries, function(entry) { %>
+      <div>
+        ・<%= entry.name %>
+      </div>
+    <% }); %>
+    </div>
+  </div>
 </div>
