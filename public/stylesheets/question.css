@@ -65,7 +65,7 @@ body {
   font-size: 100px;
   position: absolute;
   top: 40%;
-  text-align: center;
+  left: 40%;
 }
 
 /* quiz */
@@ -100,15 +100,22 @@ body {
 }
 
 .choice-number {
-  width: 100%;
-  height: 30px;
-  padding: 5px;
-  text-align: left;
+  position: absolute;
+  left: 5px;
+  font-weight: bold;
+  color: yellow;
+  text-shadow: 0px 0px 10px #000000;
 }
 
 .choice-content {
   width: 100%;
-  height: 330px;
+  height: 360px;
+}
+
+.choice-image {
+  width: 360px;
+  height: 360px;
+  overflow: hidden;
 }
 
 .choice-answers {
@@ -116,7 +123,7 @@ body {
   bottom: 10px;
   right: 0px;
   width: 90px;
-  height: 30px;
+  height: 40px;
   padding: 5px;
   text-align: center;
 }

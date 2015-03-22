@@ -1,5 +1,5 @@
 <div id="quiz">
-  <div id="timer"><%= _timer %></div>
+  <div id="timer"></div>
   <div id="question"><%= answerableQuestion.question.text %></div>
   <div>
     <table id="choices">
@@ -9,14 +9,18 @@
         <% if ((choice.number - 1) % columnCount === 0) { %>
         <tr>
         <% } %>
-          <td id="answer_<%= choice.number %>" class="choice">
+          <td class="choice">
             <div class="choice-number">
               <%= choice.number %>
             </div>
             <div class="choice-content">
-              <%= choice.label %>
+              <% if (choice.image.length > 0) { %>
+                <img src="/_quiz/<%= choice.image %>" class="choice-image" />
+              <% } else { %>
+                <%= choice.label %>
+              <% } %>
             </div>
-            <div class="choice-answers">
+            <div id="answer_<%= choice.number %>" class="choice-answers">
               <%= answerCount[choice.number] %>
             </div>
           </td>

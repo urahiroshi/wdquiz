@@ -9,7 +9,16 @@
 wdquiz.question.quizView = Backbone.Marionette.ItemView.extend
   template: JST["wdquiz.question.quiz.jst"]
   _timer: 0
+  _timeout: 0
   _answerableQuestion: null
+  ui:
+    choiceImages: ".choice-image"
+    timer: "#timer"
+    choiceContents: ".choice-content"
+    choiceAnswers: ".choice-answers"
+  _effectees: []
+  EFFECT:
+    LENS_BLUR: 0
 
   _onPressKey: (callback, targetKey) ->
     targetKey = targetKey || 13
@@ -38,6 +47,37 @@ wdquiz.question.quizView = Backbone.Marionette.ItemView.extend
         )
     )
 
+  _startEffect: () ->
+    effect = @EFFECT.LENS_BLUR
+    for image in $(@ui.choiceImages)
+      canvas = fx.canvas()
+      texture = canvas.texture(image)
+      @_draw(canvas, texture, effect, 100)
+      image.parentNode.insertBefore(canvas, image)
+      image.parentNode.removeChild(image)
+      @_effectees.push(canvas: canvas, texture: texture)
+    $(@ui.choiceContents).css('visibility', 'visible')
+    @_setEffectTimer(effect, @_timeout * 1000, 250, 1)
+
+  _setEffectTimer: (effect, totalTime, interval, counter) ->
+    elapsedTime = counter * interval
+    level = (1 - (elapsedTime / totalTime)) * 100
+    setTimeout(
+      () =>
+        if elapsedTime < totalTime
+          @_setEffectTimer(effect, totalTime, interval, counter + 1)
+        @_applyEffect(effect, level)
+      interval
+    )
+
+  _applyEffect: (effect, level) ->
+    for effectee in @_effectees
+      @_draw(effectee.canvas, effectee.texture, effect, level)
+
+  _draw: (canvas, texture, effect, level) ->
+    if effect == @EFFECT.LENS_BLUR
+      canvas.draw(texture).lensBlur(level / 2, 0.75, 0).update()
+
   _viewAnswerCount: ->
     # 各番号の回答数を表示する
     wdquiz.answerClient.get(
@@ -48,6 +88,7 @@ wdquiz.question.quizView = Backbone.Marionette.ItemView.extend
         for answer in answers
           answerCount[answer.answerNumber] += 1
         @model.set(answerCount: answerCount)
+        $(@ui.choiceAnswers).css('background-color', 'white')
         console.log("viewCorrectAnswer by keypress")
         @_onPressKey(() => @_viewCorrectAnswer())
       () =>
@@ -65,9 +106,12 @@ wdquiz.question.quizView = Backbone.Marionette.ItemView.extend
         console.log("error: answerableQuestionClient.delete")
     )
 
+  _setTimer: (time) ->
+    $(@ui.timer).text(String(time))
+
   _countDown: ->
     @_timer = @_timer - 1
-    @model.set(_timer: String(@_timer))
+    @_setTimer(@_timer)
     if(@_timer > 0)
       window.setTimeout(
         () => @_countDown()
@@ -81,5 +125,16 @@ wdquiz.question.quizView = Backbone.Marionette.ItemView.extend
     @_answerableQuestion = @model.get('answerableQuestion')
 
   onShow: ->
-    @_timer = @_answerableQuestion.question.timeout + 1
-    @_countDown()
+    @_timeout = @_answerableQuestion.question.timeout
+    @_setTimer(@_timeout)
+    if @_timeout > 0
+      $(@ui.choiceContents).css('visibility', 'hidden')
+      @_timer = @_timeout + 1
+      window.setTimeout(
+        () =>
+          @_startEffect()
+          @_countDown()
+        300
+      )
+    else
+      @_finishQuestion()
