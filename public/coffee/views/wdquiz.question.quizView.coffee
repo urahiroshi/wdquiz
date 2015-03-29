@@ -17,6 +17,7 @@ wdquiz.question.quizView = Backbone.Marionette.ItemView.extend
     choiceContents: ".choice-content"
     choiceAnswers: ".choice-answers"
   _effectees: []
+  _audio: null
   EFFECT:
     LENS_BLUR: 0
 
@@ -97,6 +98,7 @@ wdquiz.question.quizView = Backbone.Marionette.ItemView.extend
     )
 
   _finishQuestion: () ->
+    @_endAudio()
     wdquiz.answerableQuestionClient.delete(
       @_answerableQuestion._id
       (result) =>
@@ -120,6 +122,23 @@ wdquiz.question.quizView = Backbone.Marionette.ItemView.extend
     else
       @_finishQuestion()
 
+  _startAudio: ->
+    audioStart = document.getElementById('audio-quiz-start')
+    if audioStart
+      audioStart.play()
+      audioStart.onended = () =>
+        @_audio = document.getElementById('audio-quiz-tick')
+        if @_audio
+          @_audio.loop = true
+          @_audio.play()
+
+  _endAudio: ->
+    if @_audio
+      @_audio.pause()
+    audioEnd = document.getElementById('audio-quiz-end')
+    if audioEnd
+      audioEnd.play()
+
   initialize: ->
     @listenTo @model, 'change', @render
     @_answerableQuestion = @model.get('answerableQuestion')
@@ -133,6 +152,7 @@ wdquiz.question.quizView = Backbone.Marionette.ItemView.extend
       window.setTimeout(
         () =>
           @_startEffect()
+          @_startAudio()
           @_countDown()
         300
       )
