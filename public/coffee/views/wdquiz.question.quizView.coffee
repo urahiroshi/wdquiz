@@ -31,6 +31,7 @@ wdquiz.question.quizView = Backbone.Marionette.ItemView.extend
     wdquiz.question.goto.wait @model.get('contest')
 
   _viewCorrectAnswer: ->
+    wdquiz.question.playAudio('audio-correct-answer')
     # 正解を表示する
     correctNumber = @_answerableQuestion.question.correctNumber
     $answerContainer = $("#answer_" + correctNumber)
@@ -90,6 +91,7 @@ wdquiz.question.quizView = Backbone.Marionette.ItemView.extend
           answerCount[answer.answerNumber] += 1
         @model.set(answerCount: answerCount)
         $(@ui.choiceAnswers).css('background-color', 'white')
+        wdquiz.question.playAudio('audio-answer-count')
         console.log("viewCorrectAnswer by keypress")
         @_onPressKey(() => @_viewCorrectAnswer())
       () =>
@@ -123,21 +125,14 @@ wdquiz.question.quizView = Backbone.Marionette.ItemView.extend
       @_finishQuestion()
 
   _startAudio: ->
-    audioStart = document.getElementById('audio-quiz-start')
-    if audioStart
-      audioStart.play()
-      audioStart.onended = () =>
-        @_audio = document.getElementById('audio-quiz-tick')
-        if @_audio
-          @_audio.loop = true
-          @_audio.play()
+    audio = wdquiz.question.playAudio('audio-quiz-start')
+    audio.onended = () =>
+      @_audio = wdquiz.question.playAudio('audio-quiz-tick', true)
 
   _endAudio: ->
     if @_audio
       @_audio.pause()
-    audioEnd = document.getElementById('audio-quiz-end')
-    if audioEnd
-      audioEnd.play()
+    wdquiz.question.playAudio('audio-quiz-end')
 
   initialize: ->
     @listenTo @model, 'change', @render

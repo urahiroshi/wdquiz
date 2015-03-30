@@ -35,6 +35,13 @@ wdquiz.question = do() ->
       ending: () ->
         collection = new wdquiz.question.endingModel()
         _showContainer new wdquiz.question.endingView collection: collection
+    playAudio: (id, isLoop = false) ->
+      audio = document.getElementById(id)
+      if audio
+        audio.loop = isLoop
+        audio.load()
+        audio.play()
+      return audio
     contest: null
   }
 

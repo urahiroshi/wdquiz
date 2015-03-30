@@ -15,6 +15,7 @@ wdquiz.question.waitView = Marionette.ItemView.extend
   _onSuccessCreateAnswerableQuestion: (answerableQuestion) ->
     if answerableQuestion._id
       @model.set(title: answerableQuestion.question.order + '問目')
+      wdquiz.question.playAudio('audio-quiz-prepare')
       @pressKey = (keyCode) =>
         wdquiz.answerableQuestionClient.changeVisible(
           answerableQuestion._id

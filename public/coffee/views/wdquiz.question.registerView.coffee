@@ -9,6 +9,7 @@ wdquiz.question.registerView = Backbone.Marionette.ItemView.extend
   template: JST["wdquiz.question.register.jst"]
   _enableKeyPress: false
   _viewEntriesInterval: null
+  _audio: null
   _onSuccessGetNotFinished: (result) ->
     if(result._id)
       console.log 'find contest'
@@ -42,9 +43,11 @@ wdquiz.question.registerView = Backbone.Marionette.ItemView.extend
   pressKey: (keyCode) ->
     if(@_enableKeyPress)
       clearInterval(@_viewEntriesInterval)
+      @_audio.pause()
       wdquiz.question.goto.wait()
   initialize: ->
     @listenTo @model, 'change', @render
+    @_audio = wdquiz.question.playAudio('audio-opening', true)
     wdquiz.contestClient.getNotFinished(
       _.bind @_onSuccessGetNotFinished, @
       () ->
