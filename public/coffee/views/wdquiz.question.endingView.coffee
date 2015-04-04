@@ -22,22 +22,22 @@ wdquiz.question.endingView = Marionette.CompositeView.extend
     {
       start: 100
       end: 11
-      interval: 5000
+      interval: 1000
     }
     {
       start: 10
       end: 6
-      interval: 5000
+      interval: 1000
     }
     {
       start: 5
       end: 3
-      interval: 10000
+      interval: 3000
     }
     {
       start: 2
       end: 1
-      interval: 5000
+      interval: 3000
     }
   ]
   _finishContestOnClick: () ->
