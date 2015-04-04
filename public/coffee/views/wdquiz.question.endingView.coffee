@@ -16,7 +16,7 @@ wdquiz.question.endingView = Marionette.CompositeView.extend
   _ascOrderedEntryIds: []
   _isFinishedEntries: false
   _isFinishedAnswers: false
-  _displayingRanking: 9999
+  _displayedRanking: 9999
   _displayRowsOnPage: 10
   _displayBlock: [
     {
@@ -55,12 +55,12 @@ wdquiz.question.endingView = Marionette.CompositeView.extend
     console.log("dispTimer: " + interval)
     setTimeout(
       () =>
-        displayIndex = @_ascOrderedEntryIds.length - @_displayingRanking
+        displayIndex = @_ascOrderedEntryIds.length - (@_displayedRanking - 1)
         console.log("display: " + String(displayIndex))
         entryId = @_ascOrderedEntryIds[displayIndex]
         entry = @_calculatingEntries[entryId]
         model = new wdquiz.question.scoreModel(
-          ranking: @_displayingRanking
+          ranking: @_displayedRanking - 1
           name: entry.name
           point: entry.totalPoint
           time: entry.totalTime / 1000
@@ -68,19 +68,19 @@ wdquiz.question.endingView = Marionette.CompositeView.extend
         @collection.add model
         # child = new wdquiz.question.scoreView(model: model)
         # @addChild(child, wdquiz.question.scoreView)
-        if @_displayingRanking > endRanking
-          @_displayingRanking -= 1
+        @_displayedRanking -= 1
+        if @_displayedRanking > endRanking
           @_displayRanking(endRanking, interval)
       interval
     )
   _displayRankings: (startRanking, endRanking, interval) ->
     entryCount = @_ascOrderedEntryIds.length
     if endRanking > entryCount
-      @_displayingRanking = endRanking
+      @_displayedRanking = endRanking
       return false
     if startRanking > entryCount
       startRanking = entryCount
-    @_displayingRanking = startRanking
+    @_displayedRanking = startRanking + 1
     @_displayRanking(endRanking, interval)
     return true
   _displayRankingsBlock: (blockIndex) ->
@@ -90,7 +90,7 @@ wdquiz.question.endingView = Marionette.CompositeView.extend
       @_displayRankingsBlock(blockIndex + 1)
     displayFinishedChecker = setInterval(
       () =>
-        if @_displayingRanking == display.end
+        if @_displayedRanking == display.end
           clearInterval(displayFinishedChecker)
           @_displayRankingsBlockOnClick(blockIndex + 1)
       1000
@@ -106,7 +106,7 @@ wdquiz.question.endingView = Marionette.CompositeView.extend
           @_finishContestOnClick()
   _onGetAnswersAndEntries: () ->
     for answer in @_answers
-      if answer.answerPoint > 0
+      if answer.answerPoint and answer.answerPoint > 0
         entry = @_calculatingEntries[answer.entryId]
         entry.totalPoint += answer.answerPoint
         entry.totalTime += answer.answerTime
@@ -114,7 +114,7 @@ wdquiz.question.endingView = Marionette.CompositeView.extend
       _.keys(@_calculatingEntries)
       (entryId) =>
         entry = @_calculatingEntries[entryId]
-        return entry.totalPoint * 10000 - entry.totalTime
+        return entry.totalPoint * 10000000 - entry.totalTime
     )
     @_displayRankingsBlockOnClick(0)
   _onGetEntries: (entries) ->
