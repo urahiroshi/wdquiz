@@ -16,6 +16,10 @@ var express = require('express'),
     isUpdated,
     needQuestionPermission;
 
+process.on('uncaughtException', function(err) {
+  console.log("UNCAUGHT EXCEPTION OCCURED!!: " + err);
+});
+
 // ---- private functions ----
 
 needQuestionPermission = function(req, res, next) {
