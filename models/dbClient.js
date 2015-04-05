@@ -60,8 +60,13 @@ client.qExec = function(table, onCollect) {
     };
   };
   onConnect = function(err, db) {
-    var collection = db.collection(table);
-    onCollect(collection, onFinishGen(db));
+    if (db) {
+      var collection = db.collection(table);
+      onCollect(collection, onFinishGen(db));
+    } else {
+      endLog('error', "db is null");
+      d.reject(new Error());
+    }
   };
   dbClient.connect(url, onConnect);
   return d.promise;
