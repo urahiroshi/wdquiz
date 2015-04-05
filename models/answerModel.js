@@ -5,9 +5,9 @@ var client = require('./dbClient'),
     dt = require('./dtHandler'),
     TABLE_NAME = 'answer';
 
-model.create = function(entryId, answerableQuestionId, answerNumber, contestId, startDt) {
+model.create = function(entryId, answerableQuestionId, answerNumber, answerDt, contestId, startDt) {
   var onGetAnswer, answerTime;
-  answerTime = dt.now() - startDt;
+  answerTime = answerDt - startDt;
   onGetAnswer = function(answer) {
     if (answer._id) {
       return {};

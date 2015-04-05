@@ -8,6 +8,7 @@ var express = require('express'),
     entryModel = require('../models/entryModel'),
     questionModel = require('../models/questionModel'),
     sessionModel = require('../models/sessionModel'),
+    dt = require('../models/dtHandler'),
     router = express.Router(),
     onErrorBaseGen,
     onSuccessBaseGen,
@@ -292,6 +293,7 @@ router.post('/answer/', function(req, res) {
   var answerableQuestionId = req.body.answerableQuestionId,
       entryId = req.body.entryId,
       answerNumber = Number(req.body.number),
+      answerDt = dt.now(),
       createAnswer;
   createAnswer = function(answerableQuestion) {
     if (answerableQuestion._id) {
@@ -299,6 +301,7 @@ router.post('/answer/', function(req, res) {
         entryId,
         answerableQuestionId,
         answerNumber,
+        answerDt,
         answerableQuestion.contestId,
         answerableQuestion.startDt
       );
