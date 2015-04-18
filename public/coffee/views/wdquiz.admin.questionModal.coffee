@@ -1,6 +1,7 @@
 wdquiz.admin.questionModal = wdquiz.admin.ItemView.extend
   # ---- properties ----
   template: JST["wdquiz.admin.question.modal.jst"]
+  _effect: "question-effect"
   events:
     "click #addChoice": "onClickAddChoice"
     "click .deleteChoice": "onClickDeleteChoice"
@@ -20,6 +21,8 @@ wdquiz.admin.questionModal = wdquiz.admin.ItemView.extend
           question.choices[number][choiceMatcher[2]] = @value
         else
           question[idMatcher[1]] = @value
+    effect = document.getElementById(@_effect)
+    question['effect'] = effect.value
     return question
   # ---- event handlers ----
   onClickSaveQuestion: ->
@@ -52,3 +55,9 @@ wdquiz.admin.questionModal = wdquiz.admin.ItemView.extend
   # ---- override methods ----
   initialize: ->
     @listenTo @model, 'change', @render
+  onShow: ->
+    effect = document.getElementById(@_effect)
+    if @model.toJSON().question.effect != undefined
+      effect.value = @model.toJSON().question.effect
+    else
+      effect.value = '-1'

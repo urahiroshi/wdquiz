@@ -53,6 +53,15 @@
     <input type="button" id="addChoice" class="btn" value="追加" />
   </div>
   <div class="form-group">
+    <label>エフェクト</label>
+    <select id="question-effect" class="form-control">
+      <option value="-1">なし</option>
+      <option value="0">LENS_BLUR</option>
+      <option value="1">ZOOM_BLUR</option>
+      <option value="2">ZOOM_OUT</option>
+    </select>
+  </div>
+  <div class="form-group">
     <label>正解番号</label>
     <input type="text" id="question-correctNumber"
            value="<%= question.correctNumber %>" class="form-control" />

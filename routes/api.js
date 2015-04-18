@@ -144,13 +144,8 @@ router.get('/answerableQuestion/', function(req, res) {
   var contestId = req.query.contestId,
       getVisibleQuestion;
   getVisibleQuestion = function(hasPermission) {
-    if (hasPermission) {
-      answerableQuestionModel.getVisibleQuestion(contestId, false)
-        .done(onSuccessBaseGen(res), onErrorBaseGen(res));
-    } else {
-      answerableQuestionModel.getVisibleQuestion(contestId, true)
-        .done(onSuccessBaseGen(res), onErrorBaseGen(res));
-    }
+    answerableQuestionModel.getVisibleQuestion(contestId, !hasPermission)
+      .done(onSuccessBaseGen(res), onErrorBaseGen(res));
   };
   sessionModel.hasPermission(req.cookies, sessionModel.PERMISSION.QUESTION)
     .then(getVisibleQuestion);
@@ -231,7 +226,8 @@ router.post('/question/', function(req, res) {
     text: req.body.text,
     choices: req.body.choices,
     correctNumber: Number(req.body.correctNumber),
-    timeout: Number(req.body.timeout)
+    timeout: Number(req.body.timeout),
+    effect: Number(req.body.effect)
   };
   questionModel.create(question)
     .done(onSuccessBaseGen(res), onErrorBaseGen(res));
@@ -252,7 +248,8 @@ router.put('/question/:id', function(req, res) {
     text: req.body.text,
     choices: req.body.choices,
     correctNumber: Number(req.body.correctNumber),
-    timeout: Number(req.body.timeout)
+    timeout: Number(req.body.timeout),
+    effect: Number(req.body.effect)
   };
   questionModel.update(id, updateMap)
     .done(onWriteFinishedBaseGen(res), onErrorBaseGen(res));
