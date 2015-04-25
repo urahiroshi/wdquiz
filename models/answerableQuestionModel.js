@@ -12,6 +12,9 @@ var client = require('./dbClient'),
 hideAnswer = function(answerableQuestion) {
   if(answerableQuestion._id) {
     answerableQuestion.question.correctNumber = -1;
+    answerableQuestion.question.choices.each(function(choice) {
+      choice.label = '';
+    });
   }
   return answerableQuestion;
 };

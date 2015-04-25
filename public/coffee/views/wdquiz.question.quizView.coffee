@@ -20,6 +20,9 @@ wdquiz.question.quizView = Backbone.Marionette.ItemView.extend
   _audio: null
   EFFECT:
     LENS_BLUR: 0
+    ZOOM_BLUR: 1
+    ZOOM_OUT: 2
+    NONE: -1
 
   _onPressKey: (callback, targetKey) ->
     targetKey = targetKey || 13
@@ -50,7 +53,7 @@ wdquiz.question.quizView = Backbone.Marionette.ItemView.extend
     )
 
   _startEffect: () ->
-    effect = @EFFECT.LENS_BLUR
+    effect = @_answerableQuestion.question.effect
     for image in $(@ui.choiceImages)
       canvas = fx.canvas()
       texture = canvas.texture(image)
