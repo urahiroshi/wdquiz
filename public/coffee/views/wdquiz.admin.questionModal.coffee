@@ -30,14 +30,18 @@ wdquiz.admin.questionModal = wdquiz.admin.ItemView.extend
     if(question._id == '')
       wdquiz.questionClient.create(
         question
-        @_genMsgHandler '保存しました。'
+        () =>
+          @_genMsgHandler('保存しました。')()
+          @onClickCloseQuestion()
         @_genMsgHandler '保存に失敗しました。'
       )
     else
       wdquiz.questionClient.update(
         question._id
         question
-        @_genMsgHandler '更新しました。'
+        () =>
+          @_genMsgHandler('更新しました。')()
+          @onClickCloseQuestion()
         @_genMsgHandler '更新に失敗しました。'
       )
   onClickAddChoice: ->
