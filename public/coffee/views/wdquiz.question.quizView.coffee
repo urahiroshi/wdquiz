@@ -10,6 +10,8 @@ wdquiz.question.quizView = Backbone.Marionette.ItemView.extend
   template: JST["wdquiz.question.quiz.jst"]
   _timer: 0
   _timeout: 0
+  _imgX: 360
+  _imgY: 360
   _answerableQuestion: null
   ui:
     choiceImages: ".choice-image"
@@ -22,6 +24,7 @@ wdquiz.question.quizView = Backbone.Marionette.ItemView.extend
     LENS_BLUR: 0
     ZOOM_BLUR: 1
     ZOOM_OUT: 2
+    HEXAGONAL: 3
     NONE: -1
 
   _onPressKey: (callback, targetKey) ->
@@ -55,12 +58,21 @@ wdquiz.question.quizView = Backbone.Marionette.ItemView.extend
   _startEffect: () ->
     effect = @_answerableQuestion.question.effect
     for image in $(@ui.choiceImages)
-      canvas = fx.canvas()
-      texture = canvas.texture(image)
-      @_draw(canvas, texture, effect, 100)
-      image.parentNode.insertBefore(canvas, image)
+      effectee = canvas: null, context: null, texture: null
+      if effect == @EFFECT.ZOOM_OUT
+        effectee.canvas = document.createElement('canvas')
+        effectee.canvas.width = @_imgX
+        effectee.canvas.height = @_imgY
+        effectee.context = effectee.canvas.getContext('2d')
+        effectee.image = new Image()
+        effectee.image.src = image.src
+      else if effect != @EFFECT.NONE
+        effectee.canvas = fx.canvas()
+        effectee.texture = effectee.canvas.texture(image)
+      @_draw(effectee, effect, 100)
+      image.parentNode.insertBefore(effectee.canvas, image)
       image.parentNode.removeChild(image)
-      @_effectees.push(canvas: canvas, texture: texture)
+      @_effectees.push(effectee)
     $(@ui.choiceContents).css('visibility', 'visible')
     @_setEffectTimer(effect, @_timeout * 1000, 250, 1)
 
@@ -77,11 +89,47 @@ wdquiz.question.quizView = Backbone.Marionette.ItemView.extend
 
   _applyEffect: (effect, level) ->
     for effectee in @_effectees
-      @_draw(effectee.canvas, effectee.texture, effect, level)
+      @_draw(effectee, effect, level)
 
-  _draw: (canvas, texture, effect, level) ->
+  _draw: (effectee, effect, level) ->
+    # levelは100(強エフェクト)から0(エフェクトなし)まで選択できる
     if effect == @EFFECT.LENS_BLUR
-      canvas.draw(texture).lensBlur(level / 2, 0.75, 0).update()
+      effectee.canvas.draw(effectee.texture).lensBlur(
+        level / 2
+        0.75
+        0
+      ).update()
+    else if effect == @EFFECT.ZOOM_BLUR
+      effectee.canvas.draw(effectee.texture).zoomBlur(
+        @_imgX / 2
+        @_imgY / 2
+        level / 100
+      ).update()
+    else if effect == @EFFECT.HEXAGONAL
+      if level == 0
+        effectee.canvas.draw(effectee.texture).lensBlur(0, 0.75, 0).update()
+      else
+        effectee.canvas.draw(effectee.texture).hexagonalPixelate(
+          @_imgX / 2
+          @_imgY / 2
+          level / 2
+        ).update()
+    else if effect == @EFFECT.ZOOM_OUT
+      iw = effectee.image.width
+      ih = effectee.image.height
+      sw = Math.floor(iw  / (1 + level / 20))
+      sh = Math.floor(ih  / (1 + level / 20))
+      effectee.context.drawImage(
+        effectee.image
+        (iw - sw) / 2
+        (ih - sh) / 2
+        (iw + sw) / 2
+        (ih + sh) / 2
+        0
+        0
+        @_imgX
+        @_imgY
+      )
 
   _viewAnswerCount: ->
     # 各番号の回答数を表示する
