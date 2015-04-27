@@ -29,9 +29,10 @@ wdquiz.question = do() ->
         model = new wdquiz.question.waitModel()
         _showContainer new wdquiz.question.waitView model: model
       result: (answerableQuestion) ->
-        model = new wdquiz.question.resultModel
-          answerableQuestion: answerableQuestion
-        _showContainer new wdquiz.question.resultView model: model
+        collection = new wdquiz.question.resultModel()
+        view = new wdquiz.question.resultView collection: collection
+        view.answerableQuestion = answerableQuestion
+        _showContainer view
       ending: () ->
         collection = new wdquiz.question.endingModel()
         _showContainer new wdquiz.question.endingView collection: collection

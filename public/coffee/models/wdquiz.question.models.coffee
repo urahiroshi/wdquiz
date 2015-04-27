@@ -12,10 +12,14 @@ wdquiz.question.waitModel = Backbone.Model.extend
   defaults: 
     title: ''
 
-wdquiz.question.resultModel = Backbone.Model.extend
+wdquiz.question.rankingModel = Backbone.Model.extend
   defaults:
-    answerableQuestion: {}
-    validEntries: []
+    ranking: 0
+    name: ''
+    time: 0
+
+wdquiz.question.resultModel = Backbone.Collection.extend
+  model: wdquiz.question.rankingModel
 
 wdquiz.question.scoreModel = Backbone.Model.extend
   defaults:

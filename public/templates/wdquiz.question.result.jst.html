@@ -1,19 +1,16 @@
-<div>
-  早押しランキング
-</div>
-<div>
-  <table>
-    <thead>
-      <tr>
-        <th>名前</th><th>回答時間</th>
-      </tr>
-    </thead>
-    <tbody>
-    <% _.each(validEntries, function(entry) { %>
-      <tr>
-        <td><%= entry.name %></td><td><%= entry.answerTime %></td>
-      </tr>
-    <% }); %>
-    </tbody>
-  </table>
+<div id="result">
+  <div id="result-title">
+    早押しランキング
+  </div>
+  <div id="result-content">
+    <table id="result-list">
+      <thead id="result-list-header">
+        <tr>
+          <th>順位</th><th>名前</th><th>回答時間</th>
+        </tr>
+      </thead>
+      <tbody id="times">
+      </tbody>
+    </table>
+  </div>
 </div>

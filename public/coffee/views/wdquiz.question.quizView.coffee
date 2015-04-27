@@ -34,7 +34,10 @@ wdquiz.question.quizView = Backbone.Marionette.ItemView.extend
         callback()
 
   _gotoNext: ->
-    wdquiz.question.goto.wait @model.get('contest')
+    if false
+      wdquiz.question.goto.wait()
+    else
+      wdquiz.question.goto.result(@_answerableQuestion)
 
   _viewCorrectAnswer: ->
     wdquiz.question.playAudio('audio-correct-answer')
