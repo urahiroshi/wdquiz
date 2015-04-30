@@ -60,7 +60,11 @@ wdquiz.question.resultView = Marionette.CompositeView.extend
       @_onGetAnswersAndEntries()
 
   _onGetAnswers: (answers) ->
-    @_answers = answers
+    @_answers = _.filter(
+      answers
+      (answer) =>
+        answer.answerPoint > 0
+    )
     if(@_entries)
       @_onGetAnswersAndEntries()
 
