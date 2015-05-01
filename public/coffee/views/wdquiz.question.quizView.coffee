@@ -62,24 +62,25 @@ wdquiz.question.quizView = Backbone.Marionette.ItemView.extend
 
   _startEffect: () ->
     effect = @_answerableQuestion.question.effect
-    for image in $(@ui.choiceImages)
-      effectee = canvas: null, context: null, texture: null
-      if effect == @EFFECT.ZOOM_OUT
-        effectee.canvas = document.createElement('canvas')
-        effectee.canvas.width = @_imgX
-        effectee.canvas.height = @_imgY
-        effectee.context = effectee.canvas.getContext('2d')
-        effectee.image = new Image()
-        effectee.image.src = image.src
-      else if effect != @EFFECT.NONE
-        effectee.canvas = fx.canvas()
-        effectee.texture = effectee.canvas.texture(image)
-      @_draw(effectee, effect, 100)
-      image.parentNode.insertBefore(effectee.canvas, image)
-      image.parentNode.removeChild(image)
-      @_effectees.push(effectee)
+    if effect != @EFFECT.NONE
+      for image in $(@ui.choiceImages)
+        effectee = canvas: null, context: null, texture: null
+        if effect == @EFFECT.ZOOM_OUT
+          effectee.canvas = document.createElement('canvas')
+          effectee.canvas.width = @_imgX
+          effectee.canvas.height = @_imgY
+          effectee.context = effectee.canvas.getContext('2d')
+          effectee.image = new Image()
+          effectee.image.src = image.src
+        else
+          effectee.canvas = fx.canvas()
+          effectee.texture = effectee.canvas.texture(image)
+        @_draw(effectee, effect, 100)
+        image.parentNode.insertBefore(effectee.canvas, image)
+        image.parentNode.removeChild(image)
+        @_effectees.push(effectee)
+      @_setEffectTimer(effect, @_timeout * 1000, 250, 1)
     $(@ui.choiceContents).css('visibility', 'visible')
-    @_setEffectTimer(effect, @_timeout * 1000, 250, 1)
 
   _setEffectTimer: (effect, totalTime, interval, counter) ->
     elapsedTime = counter * interval
