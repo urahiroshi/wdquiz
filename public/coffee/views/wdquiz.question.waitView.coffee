@@ -16,6 +16,10 @@ wdquiz.question.waitView = Marionette.ItemView.extend
     if answerableQuestion._id
       @model.set(title: answerableQuestion.question.order + '問目')
       wdquiz.question.playAudio('audio-quiz-prepare')
+      # 画像データを先読みする
+      reader = new FileReader()
+      for choice in answerableQuestion.question.choices
+        $.get('/_quiz/' + choice.image)
       @pressKey = (keyCode) =>
         wdquiz.answerableQuestionClient.changeVisible(
           answerableQuestion._id
