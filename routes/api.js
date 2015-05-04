@@ -9,6 +9,7 @@ var express = require('express'),
     questionModel = require('../models/questionModel'),
     sessionModel = require('../models/sessionModel'),
     dt = require('../models/dtHandler'),
+    dbClient = require('../models/dbClient'),
     router = express.Router(),
     onErrorBaseGen,
     onSuccessBaseGen,
@@ -37,9 +38,8 @@ needQuestionPermission = function(req, res, next) {
 };
 
 isUpdated = function(result, count) {
-  count = count || 1;
   console.log("update result: " + JSON.stringify(result));
-  return (result === count) || (result.nModified === count);
+  return dbClient.successToModify(result, count);
 };
 
 returnError = function(res, statusCode, log) {

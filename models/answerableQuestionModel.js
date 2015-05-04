@@ -11,10 +11,12 @@ var client = require('./dbClient'),
 
 hideAnswer = function(answerableQuestion) {
   if(answerableQuestion._id) {
+    var i,
+        choicesLen = answerableQuestion.question.choices.length;
     answerableQuestion.question.correctNumber = -1;
-    answerableQuestion.question.choices.each(function(choice) {
-      choice.label = '';
-    });
+    for (i = 0; i < choicesLen; i++) {
+      answerableQuestion.question.choices[i].label = '';
+    }
   }
   return answerableQuestion;
 };
@@ -91,7 +93,7 @@ model.create = function(contestId, question) {
   };
   create = function(deleteResult) {
     if (deleteResult) {
-      if ((deleteResult !== 1) && (deleteResult.nModified !== 1)) {
+      if (!client.successToModify(deleteResult, 1)) {
         return Q.reject('既存のanswerableQuestionの削除に失敗しました。');
       }
     }
@@ -159,7 +161,7 @@ model.delete = function(id) {
   };
   deleteAnswerableQuestion = function(deleteResult) {
     console.log(String(answersCount) + '個のanswerを削除します。');
-    if ((deleteResult !== answersCount) && (deleteResult.nModified !== answersCount)) {
+    if (!client.successToModify(deleteResult, answersCount)) {
       return Q.reject('answerの削除に失敗しました。');
     }
     return client.delete(

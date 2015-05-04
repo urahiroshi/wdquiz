@@ -132,4 +132,13 @@ client.delete = function(table, queryMap) {
   });
 };
 
+client.successToModify = function(result, targetCount) {
+  if (typeof targetCount === 'undefined') {
+    targetCount = 1;
+  }
+  return (result === targetCount) ||
+          (result.nModified === targetCount) ||
+          (result.result && result.result.n === targetCount)
+};
+
 module.exports = client;
