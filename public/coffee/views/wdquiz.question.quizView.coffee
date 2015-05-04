@@ -35,8 +35,7 @@ wdquiz.question.quizView = Backbone.Marionette.ItemView.extend
 
   _gotoNext: ->
     answerCount = @model.get('answerCount')
-    correctCount = answerCount[@_answerableQuestion.question.correctNumber]
-    if correctCount == 0
+    if !@_answerableQuestion.question.isRace || answerCount[@_answerableQuestion.question.correctNumber] == 0
       wdquiz.question.goto.wait()
     else
       wdquiz.question.goto.result(@_answerableQuestion)
@@ -145,7 +144,8 @@ wdquiz.question.quizView = Backbone.Marionette.ItemView.extend
         choiceLength = @_answerableQuestion.question.choices.length
         answerCount = (0 for dummy in [0..choiceLength])
         for answer in answers
-          answerCount[answer.answerNumber] += 1
+          if (typeof answer.answerPoint != 'undefined')
+            answerCount[answer.answerNumber] += 1
         @model.set(answerCount: answerCount)
         $(@ui.choiceAnswers).css('background-color', 'white')
         wdquiz.question.playAudio('audio-answer-count')

@@ -6,8 +6,7 @@ var client = require('./dbClient'),
     TABLE_NAME = 'answer';
 
 model.create = function(entryId, answerableQuestionId, answerNumber, answerDt, contestId, startDt) {
-  var onGetAnswer, answerTime;
-  answerTime = answerDt - startDt;
+  var onGetAnswer;
   onGetAnswer = function(answer) {
     if (answer._id) {
       return {};
@@ -19,7 +18,7 @@ model.create = function(entryId, answerableQuestionId, answerNumber, answerDt, c
           answerableQuestionId: answerableQuestionId,
           answerNumber: answerNumber,
           contestId: contestId,
-          answerTime: answerTime
+          answerDt: answerDt
         }
       );
     }
@@ -56,14 +55,15 @@ model.getOne = function(answerableQuestionId, entryId) {
   );
 };
 
-model.update = function(id, answerPoint) {
+model.update = function(id, answerPoint, answerTime) {
   return client.update(
     TABLE_NAME,
     {
       _id: id
     },
     {
-      answerPoint: answerPoint
+      answerPoint: answerPoint,
+      answerTime: answerTime
     }
   );
 };
