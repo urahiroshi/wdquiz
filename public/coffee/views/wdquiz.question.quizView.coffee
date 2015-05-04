@@ -145,7 +145,8 @@ wdquiz.question.quizView = Backbone.Marionette.ItemView.extend
         choiceLength = @_answerableQuestion.question.choices.length
         answerCount = (0 for dummy in [0..choiceLength])
         for answer in answers
-          answerCount[answer.answerNumber] += 1
+          if (typeof answer.answerPoint != 'undefined')
+            answerCount[answer.answerNumber] += 1
         @model.set(answerCount: answerCount)
         $(@ui.choiceAnswers).css('background-color', 'white')
         wdquiz.question.playAudio('audio-answer-count')

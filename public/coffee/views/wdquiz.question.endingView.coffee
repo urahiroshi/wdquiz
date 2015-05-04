@@ -63,7 +63,7 @@ wdquiz.question.endingView = Marionette.CompositeView.extend
           ranking: @_displayedRanking - 1
           name: entry.name
           point: entry.totalPoint
-          time: entry.totalTime / 1000
+          time: entry.totalTime
         )
         @collection.add model, at: 0
         # child = new wdquiz.question.scoreView(model: model)

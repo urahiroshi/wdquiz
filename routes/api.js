@@ -170,7 +170,8 @@ router.delete('/answerableQuestion/:id', needQuestionPermission, function(req, r
     }
   };
   endAnswer = function(answerableQuestion) {
-    var endQuestion, finishOrder, getAnswers, updateAnswers;
+    var endQuestion, finishOrder, getAnswers, updateAnswers,
+        questionTime = dt.now() - answerableQuestion.startDt;
     endQuestion = function() {
       return answerableQuestionModel.finish(id);
     };
@@ -187,13 +188,19 @@ router.delete('/answerableQuestion/:id', needQuestionPermission, function(req, r
           updateFunctions;
       updateFunctions = answers.map(function(answer) {
         console.log("*****" + answer._id);
-        var answerPoint;
-        if (correctNumber === answer.answerNumber) {
-          answerPoint = 1;
+        var answerPoint, 
+            answerTime = Math.floor(((answer.answerDt - answerableQuestion.startDt) / questionTime) *
+                         (answerableQuestion.question.timeout * 1000)) / 1000;
+        if (answerTime <= answerableQuestion.question.timeout) {
+          if (correctNumber === answer.answerNumber) {
+            answerPoint = 1;
+          } else {
+            answerPoint = 0;
+          }
+          return answerModel.update(answer._id, answerPoint, answerTime);
         } else {
-          answerPoint = 0;
+          return 1;
         }
-        return answerModel.update(answer._id, answerPoint);
       });
       return Q.all(updateFunctions);
     };
