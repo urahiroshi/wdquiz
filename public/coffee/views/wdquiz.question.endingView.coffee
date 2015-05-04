@@ -88,13 +88,14 @@ wdquiz.question.endingView = Marionette.CompositeView.extend
     display = @_displayBlock[blockIndex]
     if !@_displayRankings(display.start, display.end, display.interval)
       @_displayRankingsBlock(blockIndex + 1)
-    displayFinishedChecker = setInterval(
-      () =>
-        if @_displayedRanking == display.end
-          clearInterval(displayFinishedChecker)
-          @_displayRankingsBlockOnClick(blockIndex + 1)
-      1000
-    )
+    else
+      displayFinishedChecker = setInterval(
+        () =>
+          if @_displayedRanking == display.end
+            clearInterval(displayFinishedChecker)
+            @_displayRankingsBlockOnClick(blockIndex + 1)
+        1000
+      )
   _displayRankingsBlockOnClick: (blockIndex) ->
     @pressKey = (keyCode) =>
       # on enter clicked
