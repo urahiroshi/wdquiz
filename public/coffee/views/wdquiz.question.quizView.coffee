@@ -62,6 +62,7 @@ wdquiz.question.quizView = Backbone.Marionette.ItemView.extend
   _startEffect: () ->
     effect = @_answerableQuestion.question.effect
     if effect != @EFFECT.NONE
+      @_effectees = []
       for image in $(@ui.choiceImages)
         effectee = canvas: null, context: null, texture: null
         if effect == @EFFECT.ZOOM_OUT
