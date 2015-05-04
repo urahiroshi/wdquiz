@@ -35,8 +35,7 @@ wdquiz.question.quizView = Backbone.Marionette.ItemView.extend
 
   _gotoNext: ->
     answerCount = @model.get('answerCount')
-    correctCount = answerCount[@_answerableQuestion.question.correctNumber]
-    if correctCount == 0
+    if !@_answerableQuestion.question.isRace || answerCount[@_answerableQuestion.question.correctNumber] == 0
       wdquiz.question.goto.wait()
     else
       wdquiz.question.goto.result(@_answerableQuestion)

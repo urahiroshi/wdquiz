@@ -193,7 +193,7 @@ router.delete('/answerableQuestion/:id', needQuestionPermission, function(req, r
                          (answerableQuestion.question.timeout * 1000)) / 1000;
         if (answerTime <= answerableQuestion.question.timeout) {
           if (correctNumber === answer.answerNumber) {
-            answerPoint = 1;
+            answerPoint = answerableQuestion.question.point;
           } else {
             answerPoint = 0;
           }
