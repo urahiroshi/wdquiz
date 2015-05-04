@@ -234,7 +234,9 @@ router.post('/question/', function(req, res) {
     choices: req.body.choices,
     correctNumber: Number(req.body.correctNumber),
     timeout: Number(req.body.timeout),
-    effect: Number(req.body.effect)
+    effect: Number(req.body.effect),
+    point: Number(req.body.point),
+    isRace: Boolean(req.body.isRace)
   };
   questionModel.create(question)
     .done(onSuccessBaseGen(res), onErrorBaseGen(res));
@@ -256,7 +258,9 @@ router.put('/question/:id', function(req, res) {
     choices: req.body.choices,
     correctNumber: Number(req.body.correctNumber),
     timeout: Number(req.body.timeout),
-    effect: Number(req.body.effect)
+    effect: Number(req.body.effect),
+    point: Number(req.body.point),
+    isRace: Boolean(req.body.isRace)
   };
   questionModel.update(id, updateMap)
     .done(onWriteFinishedBaseGen(res), onErrorBaseGen(res));

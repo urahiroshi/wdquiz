@@ -2,6 +2,7 @@ wdquiz.admin.questionModal = wdquiz.admin.ItemView.extend
   # ---- properties ----
   template: JST["wdquiz.admin.question.modal.jst"]
   _effect: "question-effect"
+  _isRace: "question-isRace"
   events:
     "click #addChoice": "onClickAddChoice"
     "click .deleteChoice": "onClickDeleteChoice"
@@ -23,6 +24,8 @@ wdquiz.admin.questionModal = wdquiz.admin.ItemView.extend
           question[idMatcher[1]] = @value
     effect = document.getElementById(@_effect)
     question['effect'] = effect.value
+    isRace = document.getElementById(@_isRace)
+    question['isRace'] = isRace.checked
     return question
   # ---- event handlers ----
   onClickSaveQuestion: ->
@@ -65,3 +68,6 @@ wdquiz.admin.questionModal = wdquiz.admin.ItemView.extend
       effect.value = @model.toJSON().question.effect
     else
       effect.value = '-1'
+    isRace = document.getElementById(@_isRace)
+    if @model.toJSON().question.isRace != undefined
+      isRace.checked = @model.toJSON().question.isRace
