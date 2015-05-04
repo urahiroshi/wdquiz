@@ -1,0 +1,24 @@
+* {
+  font-size: xx-large;
+}
+
+html {
+  text-align: center;
+}
+
+#question-text, #entry-text, #messaage {
+  margin: 30px;
+}
+
+#question-answer, #entry-input {
+  margin: 30px;
+}
+
+.selection {
+  margin-top: 20px;
+}
+
+.btnChoice {
+  width: 500px;
+  height: 80px;
+}
