@@ -27,7 +27,7 @@ router.get('/answer', function(req, res) {
 router.get('/question', checkQuestionPermission, function(req, res) {
   res.render('question');
 });
-router.get('/admin', function(req, res) {
+router.get('/admin', checkQuestionPermission, function(req, res) {
   res.render('admin');
 });
 router.get('/loginQuestion', function(req, res) {
