@@ -93,8 +93,8 @@ body {
 }
 
 .choice {
-  width: 360px;
-  height: 360px;
+  width: 290px;
+  height: 290px;
   background-color: #FFFFFF;
   position: relative;
 }
@@ -109,12 +109,12 @@ body {
 
 .choice-content {
   width: 100%;
-  height: 360px;
+  height: 290px;
 }
 
 .choice-image {
-  width: 360px;
-  height: 360px;
+  width: 290px;
+  height: 290px;
   overflow: hidden;
 }
 
