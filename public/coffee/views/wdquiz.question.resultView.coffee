@@ -15,6 +15,7 @@ wdquiz.question.resultView = Marionette.CompositeView.extend
   _orderedAnswers: null
   _DISPLAY_INTERVAL: 500
   answerableQuestion: null
+  _audio: null
 
   _displayRanking: (index) ->
     if index >= 0
@@ -32,6 +33,7 @@ wdquiz.question.resultView = Marionette.CompositeView.extend
     else
       @pressKey = (keyCode) =>
         if keyCode == 13
+          @_audio.pause()
           @pressKey = null
           wdquiz.question.goto.wait()
 
@@ -69,6 +71,7 @@ wdquiz.question.resultView = Marionette.CompositeView.extend
       @_onGetAnswersAndEntries()
 
   onShow: ->
+    @_audio = wdquiz.question.playAudio('audio-result', true)
     wdquiz.answerClient.get(
       @answerableQuestion._id
       (answers) =>
