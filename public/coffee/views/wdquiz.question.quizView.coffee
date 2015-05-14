@@ -10,8 +10,8 @@ wdquiz.question.quizView = Backbone.Marionette.ItemView.extend
   template: JST["wdquiz.question.quiz.jst"]
   _timer: 0
   _timeout: 0
-  _imgX: 360
-  _imgY: 360
+  _imgX: 290
+  _imgY: 290
   _answerableQuestion: null
   ui:
     choiceImages: ".choice-image"

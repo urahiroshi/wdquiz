@@ -1,6 +1,10 @@
 extends layout
 
+block head
+  link(rel='stylesheet', href='/stylesheets/answer.css')
 block content
+  #reload
+    a(href='', id='reloadButton', onclick='location.reload();') 更新(困った時に押す)
   #container answer page
 block libraries
   script(src='/js/wdquiz.answer.js')

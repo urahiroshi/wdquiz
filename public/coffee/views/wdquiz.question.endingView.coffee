@@ -14,6 +14,7 @@ wdquiz.question.endingView = Marionette.CompositeView.extend
   _answers: []
   _calculatingEntries: {}
   _ascOrderedEntryIds: []
+  _audio: null
   _isFinishedEntries: false
   _isFinishedAnswers: false
   _displayedRanking: 9999
@@ -62,7 +63,7 @@ wdquiz.question.endingView = Marionette.CompositeView.extend
         model = new wdquiz.question.scoreModel(
           ranking: @_displayedRanking - 1
           name: entry.name
-          point: entry.totalPoint
+          point: entry.totalPoint.toFixed(3)
           time: entry.totalTime
         )
         @collection.add model, at: 0
@@ -135,6 +136,7 @@ wdquiz.question.endingView = Marionette.CompositeView.extend
     else
       @_isFinishedAnswers = true
   onShow: ->
+    @_audio = wdquiz.question.playAudio('audio-ending', true)
     wdquiz.answerClient.getAll(
       wdquiz.question.contest._id
       (answers) =>

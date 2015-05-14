@@ -1,10 +1,12 @@
-<div>
+<div id="question-text">
   <%= answerableQuestion.question.text %>
 </div>
-<div>
+<div id="question-answer">
   <input type="hidden" id="questionId" value="<%= answerableQuestion._id %>" />
   <% _.each(answerableQuestion.question.choices, function(choice) { %>
-  <input type="button" id="choice_<%= choice.number %>" class="btnChoice"
-          value="<%= choice.number %>番" />
+  <div class="selection">
+    <input type="button" id="choice_<%= choice.number %>" class="btnChoice"
+            value="<%= choice.number %>番" />
+  </div>
   <% }); %>
 </div>

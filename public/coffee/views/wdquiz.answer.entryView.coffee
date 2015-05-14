@@ -10,16 +10,17 @@ wdquiz.answer.entryView = Backbone.Marionette.ItemView.extend
     "click #sendEntryName": "sendEntryName"
   sendEntryName: ->
     entryName = $("#entryName").val()
-    contest = @model.toJSON().contest
-    wdquiz.entryClient.create(
-      contest._id
-      entryName
-      (result) =>
-        if (result._id)
-          wdquiz.answer.setId(result._id)
-          wdquiz.answer.goto.waitQuiz(contest)
-        else
-          alert('その名前は既に使用されています。違う名前を入力してください。')
-      ->
-        console.log('エントリーの作成に失敗しました。(処理失敗)')
-    )
+    if entryName.trim().length > 0
+      contest = @model.toJSON().contest
+      wdquiz.entryClient.create(
+        contest._id
+        entryName
+        (result) =>
+          if (result._id)
+            wdquiz.answer.setId(result._id)
+            wdquiz.answer.goto.waitQuiz(contest)
+          else
+            alert('その名前は既に使用されています。違う名前を入力してください。')
+        ->
+          console.log('エントリーの作成に失敗しました。(処理失敗)')
+      )
