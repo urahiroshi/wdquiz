@@ -6,6 +6,13 @@ html {
   text-align: center;
 }
 
+#reload {
+  margin: 40px;
+}
+#entryNameArea, #entryButtonArea {
+  margin: 10px;
+}
+
 #question-text, #entry-text, #messaage {
   margin: 30px;
 }
